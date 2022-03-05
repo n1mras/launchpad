@@ -3,8 +3,12 @@ package se.haxtrams.launchpad.backend.service;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import se.haxtrams.launchpad.backend.converter.DomainConverter;
+import se.haxtrams.launchpad.backend.exceptions.domain.NotFoundException;
+import se.haxtrams.launchpad.backend.exceptions.domain.SyncInProgressException;
 import se.haxtrams.launchpad.backend.model.domain.VideoFile;
 import se.haxtrams.launchpad.backend.model.domain.settings.Settings;
 import se.haxtrams.launchpad.backend.model.repository.FileEntity;
@@ -14,6 +18,7 @@ import se.haxtrams.launchpad.backend.repository.VideoRepository;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.apache.commons.io.FilenameUtils.removeExtension;
 
@@ -26,6 +31,8 @@ public class VideoService {
     private final Settings settings;
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
+    private AtomicBoolean syncInProgress = new AtomicBoolean(false);
+
     public VideoService(VideoRepository videoRepository, FileRepository fileRepository, DomainConverter domainConverter, DataLoader dataLoader, Settings settings) {
         this.videoRepository = videoRepository;
         this.fileRepository = fileRepository;
@@ -35,24 +42,41 @@ public class VideoService {
     }
 
     @PostConstruct
-    private void init() {
-        log.info("Loading video files");
-        for (String folder : settings.getVideoSettings().getFolders()) {
-            log.info(String.format("Searching %s for video files", folder));
+    public void loadFiles() {
+        if (syncInProgress.compareAndSet(false, true)) {
+            try {
+                log.info("Loading video files");
+                for (String folder : settings.getVideoSettings().getFolders()) {
+                    log.info(String.format("Searching %s", folder));
 
-            dataLoader.findAllFilesIn(folder, true).stream()
-                .filter(this::isVideoFileType)
-                .forEach(this::upsertVideo);
+                    dataLoader.findAllFilesIn(folder, true).stream()
+                        .filter(this::isVideoFileType)
+                        .forEach(this::upsertVideo);
+                }
+
+                log.info(String.format("Done, %s video files in db", videoRepository.count()));
+            } finally {
+                syncInProgress.set(false);
+            }
+        } else {
+            log.warn("A file sync is already in progress, skipping");
         }
-
-        log.info(String.format("Done, %s video files in db", videoRepository.count()));
-
     }
 
-    public VideoFile getVideoById(final Long id) {
+    public VideoFile findVideoById(final Long id) {
         return videoRepository.findById(id)
             .map(domainConverter::toVideoFile)
-            .orElseThrow(() -> new RuntimeException("File not found"));
+            .orElseThrow(() -> new NotFoundException(String.format("Not video with id: %s", id)));
+    }
+
+    public Page<VideoFile> findVideos(Pageable pageable) {
+        return videoRepository.findAll(pageable)
+            .map(domainConverter::toVideoFile);
+    }
+
+    public Page<VideoFile> findVideosWithName(String name, Pageable pageable) {
+        return videoRepository.findAllByNameContainingIgnoreCase(name, pageable)
+            .map(domainConverter::toVideoFile);
     }
 
     private VideoEntity upsertVideo(final File file) {

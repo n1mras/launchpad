@@ -19,10 +19,6 @@ public class DataLoader {
         this.objectMapper = objectMapper;
     }
 
-    public List<File> findAllFilesIn(final String directory, final Boolean recursive) {
-       return findAllFilesIn(new File(directory), recursive, new ArrayList<>());
-    }
-
     public Settings loadSettings(final String settingsPath) {
         try {
             final var file = new File(settingsPath);
@@ -34,6 +30,10 @@ public class DataLoader {
         } catch (Exception e) {
             throw new RuntimeException("Error while loading settings", e);
         }
+    }
+
+    public List<File> findAllFilesIn(final String directory, final Boolean recursive) {
+        return findAllFilesIn(new File(directory), recursive, new ArrayList<>());
     }
 
     private List<File> findAllFilesIn(final File directory, final Boolean recursive, List<File> output) {
