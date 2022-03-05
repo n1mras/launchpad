@@ -43,23 +43,24 @@ public class VideoService {
 
     @PostConstruct
     public void loadFiles() {
-        if (syncInProgress.compareAndSet(false, true)) {
-            try {
-                log.info("Loading video files");
-                for (String folder : settings.getVideoSettings().getFolders()) {
-                    log.info(String.format("Searching %s", folder));
-
-                    dataLoader.findAllFilesIn(folder, true).stream()
-                        .filter(this::isVideoFileType)
-                        .forEach(this::upsertVideo);
-                }
-
-                log.info(String.format("Done, %s video files in db", videoRepository.count()));
-            } finally {
-                syncInProgress.set(false);
-            }
-        } else {
+        if (!syncInProgress.compareAndSet(false, true)) {
             log.warn("A file sync is already in progress, skipping");
+            return;
+        }
+
+        try {
+            log.info("Loading video files");
+            for (String folder : settings.getVideoSettings().getFolders()) {
+                log.info(String.format("Searching %s", folder));
+
+                dataLoader.findAllFilesIn(folder, true).stream()
+                    .filter(this::isVideoFileType)
+                    .forEach(this::upsertVideo);
+            }
+
+            log.info(String.format("Done, %s video files in db", videoRepository.count()));
+        } finally {
+            syncInProgress.set(false);
         }
     }
 
