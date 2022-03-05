@@ -1,7 +1,5 @@
 package se.haxtrams.launchpad.backend.service;
 
-import com.fasterxml.jackson.core.exc.StreamReadException;
-import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 import se.haxtrams.launchpad.backend.helper.ParseHelper;
@@ -42,8 +40,8 @@ public class DataLoader {
         Arrays.stream(ParseHelper.deNullify(directory.listFiles(), new File[0])).forEach(file -> {
             if (file.isFile()) {
                 output.add(file);
-            } else if (file.isDirectory()) {
-                findAllFilesIn(file, recursive, output);
+            } else if (recursive && file.isDirectory()) {
+                findAllFilesIn(file, true, output);
             }
         });
 

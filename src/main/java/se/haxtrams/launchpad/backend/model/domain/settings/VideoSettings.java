@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 import java.util.Set;
 
+@SuppressWarnings("ClassCanBeRecord")
 public class VideoSettings {
     private final String path;
     private final Set<String> args;
