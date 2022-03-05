@@ -56,7 +56,7 @@ public class VideoService {
     }
 
     private VideoEntity upsertVideo(final File file) {
-        return videoRepository.findByFilePath(file.getAbsolutePath())
+        return videoRepository.findByFilePathHash(file.getAbsolutePath().hashCode())
             .orElseGet(() -> videoRepository.save(
                     new VideoEntity(
                         removeExtension(file.getName()),
@@ -66,7 +66,7 @@ public class VideoService {
     }
 
     private FileEntity upsertFile(final File file) {
-        return fileRepository.findByPath(file.getAbsolutePath())
+        return fileRepository.findByPathHash(file.getAbsolutePath().hashCode())
             .orElseGet(() -> fileRepository.save(new FileEntity(file.getAbsolutePath(), file.getParent())));
     }
 

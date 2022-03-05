@@ -8,6 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface VideoRepository extends JpaRepository<VideoEntity, Long> {
-    boolean existsByFilePath(String path);
-    Optional<VideoEntity> findByFilePath(String filePath);
+    Optional<VideoEntity> findByFilePathHash(int hashcode);
 }

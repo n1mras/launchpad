@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface FileRepository extends JpaRepository<FileEntity, Long> {
-    Optional<FileEntity> findByPath(String path);
+    Optional<FileEntity> findByPathHash(int hashcode);
 }

@@ -13,10 +13,8 @@ public class VideoSettings {
     private final Set<String> fileTypes;
     private final List<String> folders;
 
-
-
     @JsonCreator
-    VideoSettings(@JsonProperty("path") String path,
+    public VideoSettings(@JsonProperty("path") String path,
                   @JsonProperty("args") Set<String> args,
                   @JsonProperty("fileTypes") Set<String> fileTypes,
                   @JsonProperty("folders") List<String> folders) {
