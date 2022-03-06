@@ -1,0 +1,18 @@
+{
+  "videoSettings": {
+    "path": "/usr/bin/vlc",
+    "args": [
+      "-f"
+    ],
+    "fileTypes": [
+      "avi",
+      "mp4",
+      "mpg",
+      "webm",
+      "mkv"
+    ],
+    "folders": [
+      "/home/username/Videos"
+    ]
+  }
+}
