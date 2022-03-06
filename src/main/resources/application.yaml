@@ -6,9 +6,15 @@ spring:
       enabled: false
       path: /h2
   jpa:
-    open-in-view:launchpad: false
+    open-in-view: false
   settings:
-    path: "/opt/launchpad/settings.json"
+    path: "/etc/launchpad/settings.json"
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
 
 server:
   port: 8000
