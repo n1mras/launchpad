@@ -8,7 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import se.haxtrams.launchpad.backend.converter.DomainConverter;
 import se.haxtrams.launchpad.backend.exceptions.domain.NotFoundException;
-import se.haxtrams.launchpad.backend.exceptions.domain.SyncInProgressException;
 import se.haxtrams.launchpad.backend.model.domain.VideoFile;
 import se.haxtrams.launchpad.backend.model.domain.settings.Settings;
 import se.haxtrams.launchpad.backend.model.repository.FileEntity;
@@ -55,7 +54,7 @@ public class VideoService {
 
                 dataLoader.findAllFilesIn(folder, true).stream()
                     .filter(this::isVideoFileType)
-                    .forEach(this::upsertVideo);
+                    .forEach(this::getOrCreateVideo);
             }
 
             log.info(String.format("Done, %s video files in db", videoRepository.count()));
@@ -67,7 +66,7 @@ public class VideoService {
     public VideoFile findVideoById(final Long id) {
         return videoRepository.findById(id)
             .map(domainConverter::toVideoFile)
-            .orElseThrow(() -> new NotFoundException(String.format("Not video with id: %s", id)));
+            .orElseThrow(() -> new NotFoundException(String.format("No video with id: %s", id)));
     }
 
     public Page<VideoFile> findVideos(Pageable pageable) {
@@ -80,17 +79,17 @@ public class VideoService {
             .map(domainConverter::toVideoFile);
     }
 
-    private VideoEntity upsertVideo(final File file) {
-        return videoRepository.findByFilePathHash(file.getAbsolutePath().hashCode())
+    private VideoEntity getOrCreateVideo(final File file) {
+         return videoRepository.findByFilePathHash(file.getAbsolutePath().hashCode())
             .orElseGet(() -> videoRepository.save(
                     new VideoEntity(
                         removeExtension(file.getName()),
-                        upsertFile(file))
+                        getOrCreateFile(file))
                 )
             );
     }
 
-    private FileEntity upsertFile(final File file) {
+    private FileEntity getOrCreateFile(final File file) {
         return fileRepository.findByPathHash(file.getAbsolutePath().hashCode())
             .orElseGet(() -> fileRepository.save(new FileEntity(file.getAbsolutePath(), file.getParent())));
     }
