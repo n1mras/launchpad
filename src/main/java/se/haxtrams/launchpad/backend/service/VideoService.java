@@ -81,7 +81,7 @@ public class VideoService {
     }
 
     private VideoEntity createVideo(final File file) {
-         return videoRepository.findByFilePathHash(file.getAbsolutePath().hashCode())
+        return videoRepository.findByFilePath(file.getAbsolutePath())
             .orElseGet(() -> videoRepository.save(
                     new VideoEntity(
                         cleanupFileName(removeExtension(file.getName())),
@@ -90,10 +90,8 @@ public class VideoService {
             );
     }
 
-
-
     private FileEntity createFile(final File file) {
-        return fileRepository.findByPathHash(file.getAbsolutePath().hashCode())
+        return fileRepository.findByPath(file.getAbsolutePath())
             .orElseGet(() -> fileRepository.save(new FileEntity(
                 file.getName(),
                 file.getAbsolutePath(),

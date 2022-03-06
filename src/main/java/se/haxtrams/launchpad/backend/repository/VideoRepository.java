@@ -10,6 +10,6 @@ import java.util.Optional;
 
 @Repository
 public interface VideoRepository extends JpaRepository <VideoEntity, Long> {
-    Optional<VideoEntity> findByFilePathHash(int hashcode);
+    Optional<VideoEntity> findByFilePath(String path);
     Page<VideoEntity> findAllByNameContainingIgnoreCase(String name, Pageable pageable);
 }

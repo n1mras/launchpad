@@ -11,7 +11,7 @@ public class DomainConverter {
         return new VideoFile(
             entity.getId(),
             entity.getName(),
-            entity.getName(),
+            entity.getFile().getName(),
             entity.getFile().getId(),
             entity.getFile().getPath(),
             entity.getFile().getDirectory()

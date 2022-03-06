@@ -9,6 +9,7 @@ import java.time.Instant;
 import java.util.Objects;
 
 @Entity
+@Table(indexes = @Index(columnList = "name"))
 public class VideoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -6,7 +6,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
-import java.util.Objects;
 
 @Entity
 @Table
@@ -21,8 +20,6 @@ public class FileEntity {
     @Lob
     @Column
     private String path;
-    @Column(unique = true)
-    private int pathHash;
     @NotNull
     @Lob
     private String directory;
@@ -38,7 +35,6 @@ public class FileEntity {
     public FileEntity(String name, String path, String directory) {
         this.name = name;
         this.path = path;
-        this.pathHash = path.hashCode();
         this.directory = directory;
     }
 
@@ -60,7 +56,6 @@ public class FileEntity {
 
     public void setPath(String path) {
         this.path = path;
-        this.pathHash = path.hashCode();
     }
 
     public String getDirectory() {
@@ -77,10 +72,6 @@ public class FileEntity {
 
     public Instant getModified() {
         return modified;
-    }
-
-    public int getPathHash() {
-        return pathHash;
     }
 
 
