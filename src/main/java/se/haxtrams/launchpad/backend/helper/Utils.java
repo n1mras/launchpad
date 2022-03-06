@@ -15,7 +15,7 @@ public class Utils {
      * @return clean string
      */
     public static String cleanupFileName(final String input) {
-        return input.replaceAll("(s*\\[[^]]*]|\\.|_|-\\w+)", " ")
+        return input.replaceAll("(\\[[^]]*]|\\.|_|-\\w+)", " ")
             .trim()
             .replaceAll(" +", " ");//cleanup double whitespace
     }
