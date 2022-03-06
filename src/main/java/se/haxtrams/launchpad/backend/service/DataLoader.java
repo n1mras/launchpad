@@ -2,7 +2,7 @@ package se.haxtrams.launchpad.backend.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
-import se.haxtrams.launchpad.backend.helper.ParseHelper;
+import se.haxtrams.launchpad.backend.helper.Utils;
 import se.haxtrams.launchpad.backend.model.domain.settings.Settings;
 
 import java.io.File;
@@ -37,7 +37,7 @@ public class DataLoader {
     }
 
     private List<File> findAllFilesIn(final File directory, final Boolean recursive, List<File> output) {
-        Arrays.stream(ParseHelper.deNullify(directory.listFiles(), new File[0])).forEach(file -> {
+        Arrays.stream(Utils.deNullify(directory.listFiles(), new File[0])).forEach(file -> {
             if (file.isFile()) {
                 output.add(file);
             } else if (recursive && file.isDirectory()) {

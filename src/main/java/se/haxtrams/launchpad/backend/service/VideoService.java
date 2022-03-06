@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.apache.commons.io.FilenameUtils.removeExtension;
+import static se.haxtrams.launchpad.backend.helper.Utils.*;
 
 @Service
 public class VideoService {
@@ -54,7 +55,7 @@ public class VideoService {
 
                 dataLoader.findAllFilesIn(folder, true).stream()
                     .filter(this::isVideoFileType)
-                    .forEach(this::getOrCreateVideo);
+                    .forEach(this::createVideo);
             }
 
             log.info(String.format("Done, %s video files in db", videoRepository.count()));
@@ -79,19 +80,24 @@ public class VideoService {
             .map(domainConverter::toVideoFile);
     }
 
-    private VideoEntity getOrCreateVideo(final File file) {
+    private VideoEntity createVideo(final File file) {
          return videoRepository.findByFilePathHash(file.getAbsolutePath().hashCode())
             .orElseGet(() -> videoRepository.save(
                     new VideoEntity(
-                        removeExtension(file.getName()),
-                        getOrCreateFile(file))
+                        cleanupFileName(removeExtension(file.getName())),
+                        createFile(file))
                 )
             );
     }
 
-    private FileEntity getOrCreateFile(final File file) {
+
+
+    private FileEntity createFile(final File file) {
         return fileRepository.findByPathHash(file.getAbsolutePath().hashCode())
-            .orElseGet(() -> fileRepository.save(new FileEntity(file.getAbsolutePath(), file.getParent())));
+            .orElseGet(() -> fileRepository.save(new FileEntity(
+                file.getName(),
+                file.getAbsolutePath(),
+                file.getParent())));
     }
 
     private boolean isVideoFileType(final File file) {

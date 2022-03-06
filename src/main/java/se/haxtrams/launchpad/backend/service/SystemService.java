@@ -26,7 +26,7 @@ public class SystemService {
             final List<String> cmd = new ArrayList<>();
             cmd.add(videoSettings.getPath());
             cmd.addAll(videoSettings.getArgs());
-            cmd.add(videoFile.path());
+            cmd.add(videoFile.filePath());
 
             if (Objects.nonNull(videoProcess)) {
                 log.info("Killing previous video process");
@@ -42,7 +42,7 @@ public class SystemService {
 
     public void openFileLocation(final MediaFile mediaFile) {
         try {
-            var directory = mediaFile.directory();
+            var directory = mediaFile.fileDirectory();
             var cmd = List.of("/usr/bin/xdg-open", directory);
             log.info(String.format("Opening directory: %s", directory));
 

@@ -15,6 +15,9 @@ public class FileEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotNull
+    @Column
+    private String name;
+    @NotNull
     @Lob
     @Column
     private String path;
@@ -32,7 +35,8 @@ public class FileEntity {
 
     }
 
-    public FileEntity(String path, String directory) {
+    public FileEntity(String name, String path, String directory) {
+        this.name = name;
         this.path = path;
         this.pathHash = path.hashCode();
         this.directory = directory;
@@ -40,6 +44,14 @@ public class FileEntity {
 
     public Long getId() {
         return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getPath() {
@@ -71,28 +83,5 @@ public class FileEntity {
         return pathHash;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        FileEntity that = (FileEntity) o;
-        return pathHash == that.pathHash && Objects.equals(id, that.id) && Objects.equals(path, that.path) && Objects.equals(directory, that.directory) && Objects.equals(created, that.created) && Objects.equals(modified, that.modified);
-    }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, path, pathHash, directory, created, modified);
-    }
-
-    @Override
-    public String toString() {
-        return "FileEntity{" +
-            "id=" + id +
-            ", path='" + path + '\'' +
-            ", pathHash=" + pathHash +
-            ", directory='" + directory + '\'' +
-            ", created=" + created +
-            ", modified=" + modified +
-            '}';
-    }
 }
