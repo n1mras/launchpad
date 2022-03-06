@@ -20,7 +20,7 @@ import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.apache.commons.io.FilenameUtils.removeExtension;
-import static se.haxtrams.launchpad.backend.helper.Utils.*;
+import static se.haxtrams.launchpad.backend.helper.Utils.cleanupFileName;
 
 @Service
 public class VideoService {

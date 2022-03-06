@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import se.haxtrams.launchpad.backend.converter.ApiConverter;
-import se.haxtrams.launchpad.backend.helper.ResponseHelper;
 import se.haxtrams.launchpad.backend.model.api.response.PageResponse;
 import se.haxtrams.launchpad.backend.model.api.response.VideoFileResponse;
 import se.haxtrams.launchpad.backend.service.VideoService;
@@ -16,7 +15,7 @@ import se.haxtrams.launchpad.backend.service.VideoService;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-import static se.haxtrams.launchpad.backend.helper.ResponseHelper.*;
+import static se.haxtrams.launchpad.backend.helper.ResponseHelper.createSimpleResponse;
 
 @RestController
 @RequestMapping("/media")

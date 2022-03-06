@@ -3,8 +3,8 @@ package se.haxtrams.launchpad.backend.model.domain;
 public record VideoFile(
     Long id,
     String name,
-    String fileName,
     Long fileId,
+    String fileName,
     String filePath,
     String fileDirectory
 ) implements MediaFile { }
