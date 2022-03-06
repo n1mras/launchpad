@@ -6,6 +6,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
+import java.util.Objects;
 
 @Entity
 @Table
@@ -74,5 +75,28 @@ public class FileEntity {
         return modified;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FileEntity that = (FileEntity) o;
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(path, that.path) && Objects.equals(directory, that.directory) && Objects.equals(created, that.created) && Objects.equals(modified, that.modified);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, path, directory, created, modified);
+    }
+
+    @Override
+    public String toString() {
+        return "FileEntity{" +
+            "id=" + id +
+            ", name='" + name + '\'' +
+            ", path='" + path + '\'' +
+            ", directory='" + directory + '\'' +
+            ", created=" + created +
+            ", modified=" + modified +
+            '}';
+    }
 }
