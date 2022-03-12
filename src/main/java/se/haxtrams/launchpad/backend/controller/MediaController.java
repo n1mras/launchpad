@@ -18,7 +18,7 @@ import java.util.concurrent.CompletableFuture;
 import static se.haxtrams.launchpad.backend.helper.ResponseHelper.createSimpleResponse;
 
 @RestController
-@RequestMapping("/media")
+@RequestMapping("/api/media")
 public class MediaController {
     private final VideoService videoService;
     private final ApiConverter apiConverter;

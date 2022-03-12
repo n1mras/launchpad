@@ -12,7 +12,7 @@ import se.haxtrams.launchpad.backend.service.VideoService;
 import static se.haxtrams.launchpad.backend.helper.ResponseHelper.createSimpleResponse;
 
 @RestController
-@RequestMapping("/launcher")
+@RequestMapping("/api/launcher")
 public class LauncherController {
     private final VideoService videoService;
     private final SystemService systemService;
