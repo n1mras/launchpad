@@ -29,7 +29,7 @@ public class MediaController {
         this.apiConverter = apiConverter;
     }
 
-    @GetMapping("/video/file")
+    @GetMapping("/video")
     public PageResponse<VideoFileResponse> getVideoFiles(@RequestParam(name = "page") int page,
                                                          @RequestParam(name = "size") int size,
                                                          @RequestParam(name = "filter", required = false) Optional<String> filterName
