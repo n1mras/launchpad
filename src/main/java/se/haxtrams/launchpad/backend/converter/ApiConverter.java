@@ -16,7 +16,8 @@ public class ApiConverter {
     public VideoFileResponse toVideoFileResponse(final VideoFile videoFile) {
         return new VideoFileResponse(
             videoFile.id(),
-            videoFile.name()
+            videoFile.name(),
+            videoFile.fileName()
         );
     }
 

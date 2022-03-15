@@ -1,4 +1,4 @@
-package se.haxtrams.launchpad.backend.controller;
+package se.haxtrams.launchpad.backend.controller.api.v1;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,10 +9,12 @@ import se.haxtrams.launchpad.backend.exceptions.domain.NotFoundException;
 import se.haxtrams.launchpad.backend.service.SystemService;
 import se.haxtrams.launchpad.backend.service.VideoService;
 
+import java.util.Optional;
+
 import static se.haxtrams.launchpad.backend.helper.ResponseHelper.createSimpleResponse;
 
 @RestController
-@RequestMapping("/api/launcher")
+@RequestMapping("/api/v1/launcher")
 public class LauncherController {
     private final VideoService videoService;
     private final SystemService systemService;
@@ -26,6 +28,14 @@ public class LauncherController {
     @PostMapping("/video/{id}")
     public ResponseEntity<String> launchVideo(@PathVariable("id") Long id) {
         var video = videoService.findVideoById(id);
+        systemService.openVideo(video);
+
+        return createSimpleResponse(HttpStatus.OK);
+    }
+
+    @PostMapping("/video")
+    public ResponseEntity<String> shuffleVideo(@RequestParam(value = "filter", required = false) Optional<String> filter) {
+        var video = videoService.findRandomVideo(filter.orElse(""));
         systemService.openVideo(video);
 
         return createSimpleResponse(HttpStatus.OK);

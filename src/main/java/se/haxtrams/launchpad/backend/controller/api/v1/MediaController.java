@@ -1,4 +1,4 @@
-package se.haxtrams.launchpad.backend.controller;
+package se.haxtrams.launchpad.backend.controller.api.v1;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +18,7 @@ import java.util.concurrent.CompletableFuture;
 import static se.haxtrams.launchpad.backend.helper.ResponseHelper.createSimpleResponse;
 
 @RestController
-@RequestMapping("/api/media")
+@RequestMapping("/api/v1/media")
 public class MediaController {
     private final VideoService videoService;
     private final ApiConverter apiConverter;
