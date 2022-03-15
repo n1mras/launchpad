@@ -22,7 +22,7 @@ public class SystemService {
         this.settings = settings;
     }
 
-    public synchronized void openVideo(final VideoFile videoFile) {
+    public void openVideo(final VideoFile videoFile) {
         try {
             final var videoSettings = settings.getVideoSettings();
             final List<String> cmd = new ArrayList<>();
@@ -30,15 +30,19 @@ public class SystemService {
             cmd.addAll(videoSettings.getArgs());
             cmd.add(videoFile.filePath());
 
-            if (Objects.nonNull(videoProcess)) {
-                log.info("Killing previous video process");
-                videoProcess.destroy();
-                videoProcess = null;
-            }
+            killVideoProcess();
 
             videoProcess = new ProcessBuilder(cmd).start();
         } catch (Exception e) {
             throw new RuntimeException("Error while launching video app", e);
+        }
+    }
+
+
+    public synchronized void killVideoProcess() {
+        if (Objects.nonNull(videoProcess)) {
+            log.info("Killing previous video process");
+            videoProcess.destroy();
         }
     }
 

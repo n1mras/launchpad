@@ -5,7 +5,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import se.haxtrams.launchpad.backend.converter.ApiConverter;
 import se.haxtrams.launchpad.backend.exceptions.domain.NotFoundException;
+import se.haxtrams.launchpad.backend.model.api.response.VideoFileResponse;
 import se.haxtrams.launchpad.backend.service.SystemService;
 import se.haxtrams.launchpad.backend.service.VideoService;
 
@@ -18,11 +20,13 @@ import static se.haxtrams.launchpad.backend.helper.ResponseHelper.createSimpleRe
 public class LauncherController {
     private final VideoService videoService;
     private final SystemService systemService;
+    private final ApiConverter apiConverter;
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public LauncherController(VideoService videoService, SystemService systemService) {
+    public LauncherController(VideoService videoService, SystemService systemService, ApiConverter apiConverter) {
         this.videoService = videoService;
         this.systemService = systemService;
+        this.apiConverter = apiConverter;
     }
 
     @PostMapping("/video/{id}")
@@ -33,16 +37,23 @@ public class LauncherController {
         return createSimpleResponse(HttpStatus.OK);
     }
 
-    @PostMapping("/video")
-    public ResponseEntity<String> shuffleVideo(@RequestParam(value = "filter", required = false) Optional<String> filter) {
+    @PostMapping("/video/shuffle")
+    public ResponseEntity<VideoFileResponse> shuffleVideo(@RequestParam(value = "filter", required = false) Optional<String> filter) {
         var video = videoService.findRandomVideo(filter.orElse(""));
         systemService.openVideo(video);
+
+        return ResponseEntity.ok(apiConverter.toVideoFileResponse(video));
+    }
+
+    @PostMapping("/video/kill")
+    public ResponseEntity<String> killVideoProcess() {
+        systemService.killVideoProcess();
 
         return createSimpleResponse(HttpStatus.OK);
     }
 
-    @PostMapping("/video/{id}/directory")
-    public ResponseEntity<String> launchVideoDirectory(@PathVariable("id") Long id) {
+    @PostMapping("/video/{id}/location")
+    public ResponseEntity<String> launchVideoLocation(@PathVariable("id") Long id) {
         var video = videoService.findVideoById(id);
         systemService.openFileLocation(video);
 
