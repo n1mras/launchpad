@@ -9,6 +9,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
 @SuppressWarnings("ClassCanBeRecord")
 @Service
@@ -46,5 +47,19 @@ public class DataLoader {
         });
 
         return output;
+    }
+
+    public void processAllFilesIn(final String directory, final Boolean recursive, Consumer<File> processor) {
+        processAllFilesIn(new File(directory), recursive, processor);
+    }
+
+    private void processAllFilesIn(final File directory, final Boolean recursive, Consumer<File> processor) {
+        Arrays.stream(Utils.deNullify(directory.listFiles(), new File[0])).forEach(file -> {
+            if (file.isFile()) {
+                processor.accept(file);
+            } else if (recursive && file.isDirectory()) {
+                processAllFilesIn(file, true, processor);
+            }
+        });
     }
 }

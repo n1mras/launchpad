@@ -17,6 +17,8 @@ import se.haxtrams.launchpad.backend.repository.VideoRepository;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
+import java.time.Instant;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.apache.commons.io.FilenameUtils.removeExtension;
@@ -49,16 +51,19 @@ public class VideoService {
         }
 
         try {
+            final var startTs = Instant.now();
             log.info("Loading video files");
             for (String folder : settings.getVideoSettings().getFolders()) {
                 log.info(String.format("Searching %s", folder));
 
-                dataLoader.findAllFilesIn(folder, true).stream()
-                    .filter(this::isVideoFileType)
-                    .forEach(this::createVideo);
+                dataLoader.processAllFilesIn(folder, true, file ->
+                    Optional.of(file)
+                        .filter(this::isVideoFileType)
+                        .ifPresent(this::createVideo)
+                );
             }
-
             log.info(String.format("Done, %s video files in db", videoRepository.count()));
+            log.info(String.format("Finished in %ss", Instant.now().getEpochSecond() - startTs.getEpochSecond()));
         } finally {
             syncInProgress.set(false);
         }
