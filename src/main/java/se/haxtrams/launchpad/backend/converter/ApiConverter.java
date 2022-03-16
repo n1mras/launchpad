@@ -8,10 +8,16 @@ import se.haxtrams.launchpad.backend.model.domain.VideoFile;
 
 @Component
 public class ApiConverter {
+
+    public PageResponse<VideoFileResponse> toPaginatedVideoFileResponse(final Page<VideoFile> page) {
+        return toPageResponse(page.map(this::toVideoFileResponse));
+    }
+
     public VideoFileResponse toVideoFileResponse(final VideoFile videoFile) {
         return new VideoFileResponse(
             videoFile.id(),
-            videoFile.name()
+            videoFile.name(),
+            videoFile.fileName()
         );
     }
 

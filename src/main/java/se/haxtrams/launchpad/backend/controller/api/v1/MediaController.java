@@ -1,4 +1,4 @@
-package se.haxtrams.launchpad.backend.controller;
+package se.haxtrams.launchpad.backend.controller.api.v1;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +18,7 @@ import java.util.concurrent.CompletableFuture;
 import static se.haxtrams.launchpad.backend.helper.ResponseHelper.createSimpleResponse;
 
 @RestController
-@RequestMapping("/media")
+@RequestMapping("/api/v1/media")
 public class MediaController {
     private final VideoService videoService;
     private final ApiConverter apiConverter;
@@ -29,7 +29,7 @@ public class MediaController {
         this.apiConverter = apiConverter;
     }
 
-    @GetMapping("/video/file")
+    @GetMapping("/video")
     public PageResponse<VideoFileResponse> getVideoFiles(@RequestParam(name = "page") int page,
                                                          @RequestParam(name = "size") int size,
                                                          @RequestParam(name = "filter", required = false) Optional<String> filterName

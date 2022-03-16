@@ -12,4 +12,5 @@ import java.util.Optional;
 public interface VideoRepository extends JpaRepository <VideoEntity, Long> {
     Optional<VideoEntity> findByFilePath(String path);
     Page<VideoEntity> findAllByNameContainingIgnoreCase(String name, Pageable pageable);
+    int countAllByNameContainingIgnoreCase(String name);
 }
