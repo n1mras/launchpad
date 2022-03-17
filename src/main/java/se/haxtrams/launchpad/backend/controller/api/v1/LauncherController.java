@@ -30,11 +30,11 @@ public class LauncherController {
     }
 
     @PostMapping("/video/{id}")
-    public ResponseEntity<String> launchVideo(@PathVariable("id") Long id) {
+    public ResponseEntity<VideoFileResponse> launchVideo(@PathVariable("id") Long id) {
         var video = videoService.findVideoById(id);
         systemService.openVideo(video);
 
-        return createSimpleResponse(HttpStatus.OK);
+        return ResponseEntity.ok(apiConverter.toVideoFileResponse(video));
     }
 
     @PostMapping("/video/shuffle")
@@ -53,11 +53,11 @@ public class LauncherController {
     }
 
     @PostMapping("/video/{id}/location")
-    public ResponseEntity<String> launchVideoLocation(@PathVariable("id") Long id) {
+    public ResponseEntity<VideoFileResponse> launchVideoLocation(@PathVariable("id") Long id) {
         var video = videoService.findVideoById(id);
         systemService.openFileLocation(video);
 
-        return createSimpleResponse(HttpStatus.OK);
+        return ResponseEntity.ok(apiConverter.toVideoFileResponse(video));
     }
 
     @ExceptionHandler
