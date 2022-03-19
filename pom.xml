@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>se.haxtrams.launchpad</groupId>
 	<artifactId>backend</artifactId>
-	<version>3.0.0</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<name>backend</name>
 	<description>Media server backend </description>
 	<properties>
