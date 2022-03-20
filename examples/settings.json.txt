@@ -1,8 +1,33 @@
+//Generic player config:
 {
   "videoSettings": {
+    "playerType": "GENERIC",
     "path": "/usr/bin/vlc",
     "args": [
       "-f"
+    ],
+    "fileTypes": [
+      "avi",
+      "mp4",
+      "mpg",
+      "webm",
+      "mkv"
+    ],
+    "folders": [
+      "/home/username/Videos"
+    ]
+  }
+}
+
+//Remote control extensions if using MPlayer
+{
+  "videoSettings": {
+    "playerType": "MPLAYER_SLAVE_MODE",
+    "path": "/usr/bin/mplayer",
+    "args": [
+      "-slave", //important, allows for integration.
+      "-really-quiet"
+      "-fs"
     ],
     "fileTypes": [
       "avi",
