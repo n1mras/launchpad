@@ -33,22 +33,6 @@ public class DataLoader {
         }
     }
 
-    public List<File> findAllFilesIn(final String directory, final Boolean recursive) {
-        return findAllFilesIn(new File(directory), recursive, new ArrayList<>());
-    }
-
-    private List<File> findAllFilesIn(final File directory, final Boolean recursive, List<File> output) {
-        Arrays.stream(Utils.deNullify(directory.listFiles(), new File[0])).forEach(file -> {
-            if (file.isFile()) {
-                output.add(file);
-            } else if (recursive && file.isDirectory()) {
-                findAllFilesIn(file, true, output);
-            }
-        });
-
-        return output;
-    }
-
     public void processAllFilesIn(final String directory, final Boolean recursive, Consumer<File> processor) {
         processAllFilesIn(new File(directory), recursive, processor);
     }

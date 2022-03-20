@@ -3,47 +3,32 @@ package se.haxtrams.launchpad.backend.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import se.haxtrams.launchpad.backend.integration.video.player.VideoPlayer;
+import se.haxtrams.launchpad.backend.integration.video.player.mplayer.MPlayer;
 import se.haxtrams.launchpad.backend.model.domain.MediaFile;
 import se.haxtrams.launchpad.backend.model.domain.VideoFile;
 import se.haxtrams.launchpad.backend.model.domain.settings.Settings;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+
 
 @Service
 public class SystemService {
     private final Settings settings;
     private final Logger log = LoggerFactory.getLogger(this.getClass());
-
-    private Process videoProcess;
+    private final VideoPlayer videoPlayer;
 
     public SystemService(Settings settings) {
         this.settings = settings;
+        this.videoPlayer = new MPlayer(settings.getVideoSettings());
     }
 
     public void openVideo(final VideoFile videoFile) {
-        try {
-            final var videoSettings = settings.getVideoSettings();
-            final List<String> cmd = new ArrayList<>();
-            cmd.add(videoSettings.getPath());
-            cmd.addAll(videoSettings.getArgs());
-            cmd.add(videoFile.filePath());
-
-            killVideoProcess();
-
-            videoProcess = new ProcessBuilder(cmd).start();
-        } catch (Exception e) {
-            throw new RuntimeException("Error while launching video app", e);
-        }
+        videoPlayer.openVideo(videoFile);
     }
 
-
-    public synchronized void killVideoProcess() {
-        if (Objects.nonNull(videoProcess)) {
-            log.info("Killing previous video process");
-            videoProcess.destroy();
-        }
+    public void killVideoProcess() {
+        videoPlayer.closePlayer();
     }
 
     public void openFileLocation(final MediaFile mediaFile) {
@@ -56,6 +41,10 @@ public class SystemService {
         } catch (Exception e) {
             throw new RuntimeException("Could not open directory", e);
         }
+    }
+
+    public void pause() {
+        videoPlayer.pauseResume();
     }
 
 }

@@ -8,7 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import se.haxtrams.launchpad.backend.converter.DomainConverter;
-import se.haxtrams.launchpad.backend.exceptions.domain.NotFoundException;
+import se.haxtrams.launchpad.backend.exceptions.NotFoundException;
 import se.haxtrams.launchpad.backend.model.domain.VideoFile;
 import se.haxtrams.launchpad.backend.model.domain.settings.Settings;
 import se.haxtrams.launchpad.backend.model.repository.FileEntity;
@@ -62,7 +62,7 @@ public class VideoService {
                 dataLoader.processAllFilesIn(folder, true, file ->
                     Optional.of(file)
                         .filter(this::isVideoFileType)
-                        .ifPresent(this::createVideo)
+                        .ifPresent(this::persistVideo)
                 );
             }
             log.info(String.format("Done, %s video files in db", videoRepository.count()));
@@ -92,27 +92,22 @@ public class VideoService {
             .orElseThrow();
     }
 
-    public Page<VideoFile> findVideos(Pageable pageable) {
-        return videoRepository.findAll(pageable)
-            .map(domainConverter::toVideoFile);
-    }
-
     public Page<VideoFile> findVideosWithName(String name, Pageable pageable) {
         return videoRepository.findAllByNameContainingIgnoreCase(name, pageable)
             .map(domainConverter::toVideoFile);
     }
 
-    private VideoEntity createVideo(final File file) {
+    private VideoEntity persistVideo(final File file) {
         return videoRepository.findByFilePath(file.getAbsolutePath())
             .orElseGet(() -> videoRepository.save(
                     new VideoEntity(
                         cleanupFileName(removeExtension(file.getName())),
-                        createFile(file))
+                        persistFile(file))
                 )
             );
     }
 
-    private FileEntity createFile(final File file) {
+    private FileEntity persistFile(final File file) {
         return fileRepository.findByPath(file.getAbsolutePath())
             .orElseGet(() -> fileRepository.save(new FileEntity(
                 file.getName(),

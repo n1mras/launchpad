@@ -1,3 +1,3 @@
 launchpad:
   settings:
-    path: "src/test/resources/settings.json"
+    path: "src/test/resources/generic_video_player_settings.json"

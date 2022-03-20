@@ -1,4 +1,4 @@
-package se.haxtrams.launchpad.backend.exceptions.domain;
+package se.haxtrams.launchpad.backend.exceptions;
 
 public class SyncInProgressException extends RuntimeException {
     public SyncInProgressException() {
