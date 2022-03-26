@@ -27,7 +27,7 @@ import static org.apache.commons.io.FilenameUtils.removeExtension;
 import static se.haxtrams.launchpad.backend.helper.Utils.cleanupFileName;
 
 @Service
-public class VideoService {
+public class VideoLibraryService {
     private final VideoRepository videoRepository;
     private final FileRepository fileRepository;
     private final DomainConverter domainConverter;
@@ -38,7 +38,7 @@ public class VideoService {
 
     private AtomicBoolean syncInProgress = new AtomicBoolean(false);
 
-    public VideoService(VideoRepository videoRepository, FileRepository fileRepository, DomainConverter domainConverter, DataLoader dataLoader, Settings settings) {
+    public VideoLibraryService(VideoRepository videoRepository, FileRepository fileRepository, DomainConverter domainConverter, DataLoader dataLoader, Settings settings) {
         this.videoRepository = videoRepository;
         this.fileRepository = fileRepository;
         this.domainConverter = domainConverter;

@@ -12,7 +12,7 @@ import se.haxtrams.launchpad.backend.exceptions.NotFoundException;
 import se.haxtrams.launchpad.backend.model.api.response.PageResponse;
 import se.haxtrams.launchpad.backend.model.api.response.video.VideoFileResponse;
 import se.haxtrams.launchpad.backend.service.SystemService;
-import se.haxtrams.launchpad.backend.service.VideoService;
+import se.haxtrams.launchpad.backend.service.VideoLibraryService;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -22,13 +22,13 @@ import static se.haxtrams.launchpad.backend.helper.ResponseHelper.createSimpleRe
 @RestController
 @RequestMapping("/api/v1/library/video")
 public class VideoLibraryController {
-    private final VideoService videoService;
+    private final VideoLibraryService videoService;
     private final SystemService systemService;
     private final ApiConverter apiConverter;
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public VideoLibraryController(VideoService videoService, SystemService systemService, ApiConverter apiConverter) {
-        this.videoService = videoService;
+    public VideoLibraryController(VideoLibraryService videoLibraryService, SystemService systemService, ApiConverter apiConverter) {
+        this.videoService = videoLibraryService;
         this.systemService = systemService;
         this.apiConverter = apiConverter;
     }

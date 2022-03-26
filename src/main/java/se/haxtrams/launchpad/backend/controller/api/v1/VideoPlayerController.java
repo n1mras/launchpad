@@ -12,7 +12,7 @@ import se.haxtrams.launchpad.backend.integration.video.player.VideoPlayer;
 import se.haxtrams.launchpad.backend.model.api.response.video.VideoFileResponse;
 import se.haxtrams.launchpad.backend.model.api.response.video.player.VideoPlayerExtensionsResponse;
 import se.haxtrams.launchpad.backend.model.api.response.video.player.VideoPlayerStateResponse;
-import se.haxtrams.launchpad.backend.service.VideoService;
+import se.haxtrams.launchpad.backend.service.VideoLibraryService;
 
 import java.util.Optional;
 
@@ -22,11 +22,11 @@ import static se.haxtrams.launchpad.backend.helper.ResponseHelper.createSimpleRe
 @RequestMapping("/api/v1/video/player")
 public class VideoPlayerController {
     private final VideoPlayer videoPlayer;
-    private final VideoService videoService;
+    private final VideoLibraryService videoService;
     private final ApiConverter apiConverter;
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public VideoPlayerController(VideoPlayer videoPlayer, VideoService videoService, ApiConverter apiConverter) {
+    public VideoPlayerController(VideoPlayer videoPlayer, VideoLibraryService videoService, ApiConverter apiConverter) {
         this.videoPlayer = videoPlayer;
         this.videoService = videoService;
         this.apiConverter = apiConverter;
