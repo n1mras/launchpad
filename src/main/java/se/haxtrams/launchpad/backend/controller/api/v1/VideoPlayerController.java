@@ -53,9 +53,9 @@ public class VideoPlayerController {
     }
 
     @PostMapping("/close")
-    public VideoPlayerStateResponse closeVideoPlayer() {
+    public ResponseEntity<String> closeVideoPlayer() {
         videoPlayer.closePlayer();
-        return apiConverter.toVideoPlayerStateResponse(videoPlayer);
+        return createSimpleResponse(HttpStatus.OK);
     }
 
     @GetMapping("/extension")
@@ -64,39 +64,39 @@ public class VideoPlayerController {
     }
 
     @PostMapping("/extension/pause-resume")
-    public VideoPlayerStateResponse pauseResume() {
+    public ResponseEntity<String> pauseResume() {
         videoPlayer.pauseResume();
-        return apiConverter.toVideoPlayerStateResponse(videoPlayer);
+        return createSimpleResponse(HttpStatus.OK);
     }
 
     @PostMapping("/extension/skip-forward")
-    public VideoPlayerStateResponse skipForward() {
+    public ResponseEntity<String> skipForward() {
         videoPlayer.skipForward();
-        return apiConverter.toVideoPlayerStateResponse(videoPlayer);
+        return createSimpleResponse(HttpStatus.OK);
     }
 
     @PostMapping("/extension/skip-backward")
-    public VideoPlayerStateResponse skipBackward() {
+    public ResponseEntity<String> skipBackward() {
         videoPlayer.skipBackward();
-        return apiConverter.toVideoPlayerStateResponse(videoPlayer);
+        return createSimpleResponse(HttpStatus.OK);
     }
 
     @PostMapping("/extension/cycle-audio-track")
-    public VideoPlayerStateResponse cycleAudioTrack() {
+    public ResponseEntity<String> cycleAudioTrack() {
         videoPlayer.nextAudioTrack();
-        return apiConverter.toVideoPlayerStateResponse(videoPlayer);
+        return createSimpleResponse(HttpStatus.OK);
     }
 
     @PostMapping("/extension/cycle-subtitles")
-    public VideoPlayerStateResponse cycleSubtitles() {
+    public ResponseEntity<String> cycleSubtitles() {
         videoPlayer.nextSubtitle();
-        return apiConverter.toVideoPlayerStateResponse(videoPlayer);
+        return createSimpleResponse(HttpStatus.OK);
     }
 
     @PostMapping("/extension/toggle-subtitles")
-    public VideoPlayerStateResponse toggleSubtitles() {
+    public ResponseEntity<String> toggleSubtitles() {
         videoPlayer.toggleSubtitles();
-        return apiConverter.toVideoPlayerStateResponse(videoPlayer);
+        return createSimpleResponse(HttpStatus.OK);
     }
 
     @ExceptionHandler
