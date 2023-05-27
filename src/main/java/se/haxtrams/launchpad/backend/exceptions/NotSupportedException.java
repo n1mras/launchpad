@@ -17,7 +17,8 @@ public class NotSupportedException extends RuntimeException {
         super(cause);
     }
 
-    protected NotSupportedException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    protected NotSupportedException(
+            String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

@@ -1,12 +1,11 @@
 package se.haxtrams.launchpad.backend.model.repository;
 
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.time.Instant;
 import java.util.Objects;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table
@@ -14,24 +13,27 @@ public class FileEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @NotNull
     @Column
     private String name;
+
     @NotNull
     @Lob
     @Column
     private String path;
+
     @NotNull
     @Lob
     private String directory;
+
     @CreationTimestamp
     private Instant created;
+
     @UpdateTimestamp
     private Instant modified;
 
-    protected FileEntity() {
-
-    }
+    protected FileEntity() {}
 
     public FileEntity(String name, String path, String directory) {
         this.name = name;
@@ -80,7 +82,12 @@ public class FileEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         FileEntity that = (FileEntity) o;
-        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(path, that.path) && Objects.equals(directory, that.directory) && Objects.equals(created, that.created) && Objects.equals(modified, that.modified);
+        return Objects.equals(id, that.id)
+                && Objects.equals(name, that.name)
+                && Objects.equals(path, that.path)
+                && Objects.equals(directory, that.directory)
+                && Objects.equals(created, that.created)
+                && Objects.equals(modified, that.modified);
     }
 
     @Override
@@ -90,13 +97,12 @@ public class FileEntity {
 
     @Override
     public String toString() {
-        return "FileEntity{" +
-            "id=" + id +
-            ", name='" + name + '\'' +
-            ", path='" + path + '\'' +
-            ", directory='" + directory + '\'' +
-            ", created=" + created +
-            ", modified=" + modified +
-            '}';
+        return "FileEntity{" + "id="
+                + id + ", name='"
+                + name + '\'' + ", path='"
+                + path + '\'' + ", directory='"
+                + directory + '\'' + ", created="
+                + created + ", modified="
+                + modified + '}';
     }
 }

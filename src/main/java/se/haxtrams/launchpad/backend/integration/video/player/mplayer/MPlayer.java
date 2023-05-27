@@ -1,14 +1,13 @@
 package se.haxtrams.launchpad.backend.integration.video.player.mplayer;
 
-import se.haxtrams.launchpad.backend.integration.video.player.VideoPlayer;
-import se.haxtrams.launchpad.backend.integration.video.player.ExtendedFeatures;
-import se.haxtrams.launchpad.backend.model.domain.VideoFile;
-import se.haxtrams.launchpad.backend.model.domain.settings.VideoSettings;
-
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.*;
+import se.haxtrams.launchpad.backend.integration.video.player.ExtendedFeatures;
+import se.haxtrams.launchpad.backend.integration.video.player.VideoPlayer;
+import se.haxtrams.launchpad.backend.model.domain.VideoFile;
+import se.haxtrams.launchpad.backend.model.domain.settings.VideoSettings;
 
 public class MPlayer extends VideoPlayer {
     public MPlayer(VideoSettings videoSettings) {
@@ -23,27 +22,24 @@ public class MPlayer extends VideoPlayer {
     @Override
     public Set<ExtendedFeatures> getExtendedFeatures() {
         return Set.of(
-            ExtendedFeatures.NEXT_SUBTITLE,
-            ExtendedFeatures.TOGGLE_SUBTITLES,
-            ExtendedFeatures.PAUSE_RESUME,
-            ExtendedFeatures.NEXT_AUDIO_TRACK,
-            ExtendedFeatures.SKIP_FORWARD,
-            ExtendedFeatures.SKIP_BACKWARD
-        );
+                ExtendedFeatures.NEXT_SUBTITLE,
+                ExtendedFeatures.TOGGLE_SUBTITLES,
+                ExtendedFeatures.PAUSE_RESUME,
+                ExtendedFeatures.NEXT_AUDIO_TRACK,
+                ExtendedFeatures.SKIP_FORWARD,
+                ExtendedFeatures.SKIP_BACKWARD);
     }
 
     @Override
     public VideoFile openVideo(VideoFile videoFile) {
         lockProcessAndExecute(process -> {
             try {
-                process
-                    .filter(Process::isAlive)
-                    .ifPresent(VideoPlayer::killVideoProcess);
+                process.filter(Process::isAlive).ifPresent(VideoPlayer::killVideoProcess);
 
                 this.videoProcess = new ProcessBuilder(buildLaunchCommand(videoFile))
-                    .redirectOutput(ProcessBuilder.Redirect.INHERIT)
-                    .redirectError(ProcessBuilder.Redirect.INHERIT)
-                    .start();
+                        .redirectOutput(ProcessBuilder.Redirect.INHERIT)
+                        .redirectError(ProcessBuilder.Redirect.INHERIT)
+                        .start();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

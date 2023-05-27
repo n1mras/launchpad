@@ -17,7 +17,8 @@ public class SyncInProgressException extends RuntimeException {
         super(cause);
     }
 
-    protected SyncInProgressException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    protected SyncInProgressException(
+            String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

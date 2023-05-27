@@ -16,7 +16,7 @@ public class Utils {
      */
     public static String cleanupFileName(final String input) {
         return input.replaceAll("(\\[[^]]*]|\\.|_|-\\w+)", " ")
-            .trim()
-            .replaceAll(" +", " ");//cleanup double whitespace
+                .trim()
+                .replaceAll(" +", " "); // cleanup double whitespace
     }
 }
