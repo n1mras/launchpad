@@ -1,15 +1,12 @@
 package se.haxtrams.launchpad.backend.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
+import java.util.Arrays;
+import java.util.function.Consumer;
 import org.springframework.stereotype.Service;
 import se.haxtrams.launchpad.backend.helper.Utils;
 import se.haxtrams.launchpad.backend.model.domain.settings.Settings;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Consumer;
 
 @SuppressWarnings("ClassCanBeRecord")
 @Service

@@ -1,5 +1,8 @@
 package se.haxtrams.launchpad.backend.controller.api.v1;
 
+import static se.haxtrams.launchpad.backend.helper.ResponseHelper.createSimpleResponse;
+
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -13,10 +16,6 @@ import se.haxtrams.launchpad.backend.model.api.response.video.VideoFileResponse;
 import se.haxtrams.launchpad.backend.model.api.response.video.player.VideoPlayerExtensionsResponse;
 import se.haxtrams.launchpad.backend.model.api.response.video.player.VideoPlayerStateResponse;
 import se.haxtrams.launchpad.backend.service.VideoLibraryService;
-
-import java.util.Optional;
-
-import static se.haxtrams.launchpad.backend.helper.ResponseHelper.createSimpleResponse;
 
 @RestController
 @RequestMapping("/api/v1/video/player")
@@ -45,7 +44,8 @@ public class VideoPlayerController {
     }
 
     @PostMapping("/open/random")
-    public ResponseEntity<VideoFileResponse> openRandomVideo(@RequestParam(value = "filter", required = false) Optional<String> filter) {
+    public ResponseEntity<VideoFileResponse> openRandomVideo(
+            @RequestParam(value = "filter", required = false) Optional<String> filter) {
         var video = videoService.findRandomVideo(filter.orElse(""));
         videoPlayer.openVideo(video);
 

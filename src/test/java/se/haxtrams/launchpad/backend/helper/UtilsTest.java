@@ -1,8 +1,8 @@
 package se.haxtrams.launchpad.backend.helper;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.Test;
 
 class UtilsTest {
 
@@ -18,7 +18,8 @@ class UtilsTest {
 
     @Test
     void cleanupFileName() {
-        final var dirtyName = "[Remove] There.once____was.a.maiden.[text123].from.Stonebury-1asf32.hollow [O12sdfSf - 1234]";
+        final var dirtyName =
+                "[Remove] There.once____was.a.maiden.[text123].from.Stonebury-1asf32.hollow [O12sdfSf - 1234]";
         final var expected = "There once was a maiden from Stonebury hollow";
         final var result = Utils.cleanupFileName(dirtyName);
 

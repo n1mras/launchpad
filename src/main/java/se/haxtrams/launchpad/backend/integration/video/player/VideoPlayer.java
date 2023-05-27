@@ -1,16 +1,15 @@
 package se.haxtrams.launchpad.backend.integration.video.player;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import se.haxtrams.launchpad.backend.exceptions.NotSupportedException;
-import se.haxtrams.launchpad.backend.model.domain.VideoFile;
-import se.haxtrams.launchpad.backend.model.domain.settings.VideoSettings;
-
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import se.haxtrams.launchpad.backend.exceptions.NotSupportedException;
+import se.haxtrams.launchpad.backend.model.domain.VideoFile;
+import se.haxtrams.launchpad.backend.model.domain.settings.VideoSettings;
 
 public abstract class VideoPlayer {
     protected final Logger log = LoggerFactory.getLogger(this.getClass());
@@ -54,7 +53,6 @@ public abstract class VideoPlayer {
         throw new NotSupportedException();
     }
 
-
     /**
      * Apply lock before calling
      * @param process
@@ -81,10 +79,7 @@ public abstract class VideoPlayer {
     }
 
     protected void lockProcessAndExecuteIfAlive(Consumer<Process> consumer) {
-        lockProcessAndExecute(process -> process
-            .filter(Process::isAlive)
-            .ifPresent(consumer)
-        );
+        lockProcessAndExecute(process -> process.filter(Process::isAlive).ifPresent(consumer));
     }
 
     protected void lockProcessAndExecute(Consumer<Optional<Process>> consumer) {
@@ -95,5 +90,4 @@ public abstract class VideoPlayer {
             processLock.unlock();
         }
     }
-
 }

@@ -9,12 +9,11 @@ public class DomainConverter {
 
     public VideoFile toVideoFile(final VideoEntity entity) {
         return new VideoFile(
-            entity.getId(),
-            entity.getName(),
-            entity.getFile().getId(),
-            entity.getFile().getName(),
-            entity.getFile().getPath(),
-            entity.getFile().getDirectory()
-        );
+                entity.getId(),
+                entity.getName(),
+                entity.getFile().getId(),
+                entity.getFile().getName(),
+                entity.getFile().getPath(),
+                entity.getFile().getDirectory());
     }
 }

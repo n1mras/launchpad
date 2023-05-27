@@ -1,12 +1,11 @@
 package se.haxtrams.launchpad.backend.model.repository;
 
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.time.Instant;
 import java.util.Objects;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(indexes = @Index(columnList = "name"))
@@ -14,18 +13,21 @@ public class VideoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @NotNull
     private String name;
+
     @ManyToOne
     @JoinColumn(name = "file_id", unique = true)
     private FileEntity file;
+
     @CreationTimestamp
     private Instant created;
+
     @UpdateTimestamp
     private Instant modified;
 
-    protected VideoEntity() {
-    }
+    protected VideoEntity() {}
 
     public VideoEntity(String name, FileEntity file) {
         this.name = name;
@@ -35,7 +37,6 @@ public class VideoEntity {
     public Long getId() {
         return id;
     }
-
 
     public String getName() {
         return name;
@@ -66,7 +67,11 @@ public class VideoEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         VideoEntity that = (VideoEntity) o;
-        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(file, that.file) && Objects.equals(created, that.created) && Objects.equals(modified, that.modified);
+        return Objects.equals(id, that.id)
+                && Objects.equals(name, that.name)
+                && Objects.equals(file, that.file)
+                && Objects.equals(created, that.created)
+                && Objects.equals(modified, that.modified);
     }
 
     @Override
@@ -76,12 +81,11 @@ public class VideoEntity {
 
     @Override
     public String toString() {
-        return "VideoEntity{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", file=" + file +
-                ", created=" + created +
-                ", modified=" + modified +
-                '}';
+        return "VideoEntity{" + "id="
+                + id + ", name='"
+                + name + '\'' + ", file="
+                + file + ", created="
+                + created + ", modified="
+                + modified + '}';
     }
 }

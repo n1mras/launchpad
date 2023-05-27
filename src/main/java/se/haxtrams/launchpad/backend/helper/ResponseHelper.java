@@ -7,5 +7,4 @@ public class ResponseHelper {
     public static ResponseEntity<String> createSimpleResponse(HttpStatus httpStatus) {
         return ResponseEntity.status(httpStatus).body(httpStatus.name());
     }
-
 }

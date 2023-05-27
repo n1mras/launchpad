@@ -1,5 +1,14 @@
 package se.haxtrams.launchpad.backend.service;
 
+import static org.apache.commons.io.FilenameUtils.removeExtension;
+import static se.haxtrams.launchpad.backend.helper.Utils.cleanupFileName;
+
+import java.io.File;
+import java.time.Instant;
+import java.util.Optional;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
+import javax.annotation.PostConstruct;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,16 +25,6 @@ import se.haxtrams.launchpad.backend.model.repository.VideoEntity;
 import se.haxtrams.launchpad.backend.repository.FileRepository;
 import se.haxtrams.launchpad.backend.repository.VideoRepository;
 
-import javax.annotation.PostConstruct;
-import java.io.File;
-import java.time.Instant;
-import java.util.Optional;
-import java.util.Random;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import static org.apache.commons.io.FilenameUtils.removeExtension;
-import static se.haxtrams.launchpad.backend.helper.Utils.cleanupFileName;
-
 @Service
 public class VideoLibraryService {
     private final VideoRepository videoRepository;
@@ -38,7 +37,12 @@ public class VideoLibraryService {
 
     private AtomicBoolean syncInProgress = new AtomicBoolean(false);
 
-    public VideoLibraryService(VideoRepository videoRepository, FileRepository fileRepository, DomainConverter domainConverter, DataLoader dataLoader, Settings settings) {
+    public VideoLibraryService(
+            VideoRepository videoRepository,
+            FileRepository fileRepository,
+            DomainConverter domainConverter,
+            DataLoader dataLoader,
+            Settings settings) {
         this.videoRepository = videoRepository;
         this.fileRepository = fileRepository;
         this.domainConverter = domainConverter;
@@ -59,11 +63,9 @@ public class VideoLibraryService {
             for (String folder : settings.getVideoSettings().getFolders()) {
                 log.info(String.format("Searching %s", folder));
 
-                dataLoader.processAllFilesIn(folder, true, file ->
-                    Optional.of(file)
+                dataLoader.processAllFilesIn(folder, true, file -> Optional.of(file)
                         .filter(this::isVideoFileType)
-                        .ifPresent(this::persistVideo)
-                );
+                        .ifPresent(this::persistVideo));
             }
             log.info(String.format("Done, %s video files in db", videoRepository.count()));
             log.info(String.format("Finished in %ss", Instant.now().getEpochSecond() - startTs.getEpochSecond()));
@@ -73,9 +75,10 @@ public class VideoLibraryService {
     }
 
     public VideoFile findVideoById(final Long id) {
-        return videoRepository.findById(id)
-            .map(domainConverter::toVideoFile)
-            .orElseThrow(() -> new NotFoundException(String.format("No video with id: %s", id)));
+        return videoRepository
+                .findById(id)
+                .map(domainConverter::toVideoFile)
+                .orElseThrow(() -> new NotFoundException(String.format("No video with id: %s", id)));
     }
 
     public VideoFile findRandomVideo(final String filter) {
@@ -87,32 +90,27 @@ public class VideoLibraryService {
         final var pageRequest = PageRequest.of(random.nextInt(pageCount), 1);
 
         return videoRepository.findAllByNameContainingIgnoreCase(filter, pageRequest).stream()
-            .findFirst()
-            .map(domainConverter::toVideoFile)
-            .orElseThrow();
+                .findFirst()
+                .map(domainConverter::toVideoFile)
+                .orElseThrow();
     }
 
     public Page<VideoFile> findVideosWithName(String name, Pageable pageable) {
-        return videoRepository.findAllByNameContainingIgnoreCase(name, pageable)
-            .map(domainConverter::toVideoFile);
+        return videoRepository.findAllByNameContainingIgnoreCase(name, pageable).map(domainConverter::toVideoFile);
     }
 
     private VideoEntity persistVideo(final File file) {
-        return videoRepository.findByFilePath(file.getAbsolutePath())
-            .orElseGet(() -> videoRepository.save(
-                    new VideoEntity(
-                        cleanupFileName(removeExtension(file.getName())),
-                        persistFile(file))
-                )
-            );
+        return videoRepository
+                .findByFilePath(file.getAbsolutePath())
+                .orElseGet(() -> videoRepository.save(
+                        new VideoEntity(cleanupFileName(removeExtension(file.getName())), persistFile(file))));
     }
 
     private FileEntity persistFile(final File file) {
-        return fileRepository.findByPath(file.getAbsolutePath())
-            .orElseGet(() -> fileRepository.save(new FileEntity(
-                file.getName(),
-                file.getAbsolutePath(),
-                file.getParent())));
+        return fileRepository
+                .findByPath(file.getAbsolutePath())
+                .orElseGet(() ->
+                        fileRepository.save(new FileEntity(file.getName(), file.getAbsolutePath(), file.getParent())));
     }
 
     private boolean isVideoFileType(final File file) {

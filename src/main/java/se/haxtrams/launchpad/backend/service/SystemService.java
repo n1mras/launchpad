@@ -1,5 +1,6 @@
 package se.haxtrams.launchpad.backend.service;
 
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -8,9 +9,6 @@ import se.haxtrams.launchpad.backend.integration.video.player.mplayer.MPlayer;
 import se.haxtrams.launchpad.backend.model.domain.MediaFile;
 import se.haxtrams.launchpad.backend.model.domain.VideoFile;
 import se.haxtrams.launchpad.backend.model.domain.settings.Settings;
-
-import java.util.List;
-
 
 @Service
 public class SystemService {
@@ -46,5 +44,4 @@ public class SystemService {
     public void pause() {
         videoPlayer.pauseResume();
     }
-
 }
