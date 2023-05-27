@@ -3,7 +3,6 @@ package se.haxtrams.launchpad.backend.service;
 import static org.apache.commons.io.FilenameUtils.removeExtension;
 import static se.haxtrams.launchpad.backend.helper.Utils.cleanupFileName;
 
-import jakarta.annotation.PostConstruct;
 import java.io.File;
 import java.time.Instant;
 import java.util.Optional;
@@ -16,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import se.haxtrams.launchpad.backend.converter.DomainConverter;
 import se.haxtrams.launchpad.backend.exceptions.NotFoundException;
 import se.haxtrams.launchpad.backend.model.domain.VideoFile;
@@ -50,7 +50,6 @@ public class VideoLibraryService {
         this.settings = settings;
     }
 
-    @PostConstruct
     public void loadFiles() {
         if (!syncInProgress.compareAndSet(false, true)) {
             log.warn("A file sync is already in progress, skipping");
@@ -95,6 +94,7 @@ public class VideoLibraryService {
                 .orElseThrow();
     }
 
+    @Transactional(readOnly = true)
     public Page<VideoFile> findVideosWithName(String name, Pageable pageable) {
         return videoRepository.findAllByNameContainingIgnoreCase(name, pageable).map(domainConverter::toVideoFile);
     }

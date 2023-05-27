@@ -60,12 +60,12 @@ public class MPlayer extends VideoPlayer {
 
     @Override
     public void skipForward() {
-        sendCommand(String.format("%s 15 0", CLICommands.SEEK.getValue()));
+        sendCommand("%s 15 0".formatted(CLICommands.SEEK));
     }
 
     @Override
     public void skipBackward() {
-        sendCommand(String.format("%s -15 0", CLICommands.SEEK.getValue()));
+        sendCommand("%s -15 0".formatted(CLICommands.SEEK));
     }
 
     @Override

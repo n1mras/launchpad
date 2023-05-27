@@ -1,14 +1,15 @@
 package se.haxtrams.launchpad.backend.model.repository;
 
 import jakarta.persistence.*;
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import java.time.Instant;
 import java.util.Objects;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.*;
 
 @Entity
-@Table(indexes = @Index(columnList = "name"))
+@Table(name = "video", indexes = @Index(columnList = "name"))
 public class VideoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,7 +18,7 @@ public class VideoEntity {
     @NotNull
     private String name;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "file_id", unique = true)
     private FileEntity file;
 
