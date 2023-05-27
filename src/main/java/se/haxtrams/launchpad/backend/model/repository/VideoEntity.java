@@ -1,9 +1,9 @@
 package se.haxtrams.launchpad.backend.model.repository;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import java.time.Instant;
 import java.util.Objects;
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
