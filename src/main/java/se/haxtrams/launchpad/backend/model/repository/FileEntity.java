@@ -3,7 +3,6 @@ package se.haxtrams.launchpad.backend.model.repository;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import java.time.Instant;
-import java.util.Objects;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -26,6 +25,9 @@ public class FileEntity {
     @NotNull
     @Lob
     private String directory;
+
+    @OneToOne(mappedBy = "file", orphanRemoval = true)
+    private VideoEntity video;
 
     @CreationTimestamp
     private Instant created;
@@ -75,24 +77,6 @@ public class FileEntity {
 
     public Instant getModified() {
         return modified;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        FileEntity that = (FileEntity) o;
-        return Objects.equals(id, that.id)
-                && Objects.equals(name, that.name)
-                && Objects.equals(path, that.path)
-                && Objects.equals(directory, that.directory)
-                && Objects.equals(created, that.created)
-                && Objects.equals(modified, that.modified);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name, path, directory, created, modified);
     }
 
     @Override
