@@ -1,5 +1,6 @@
 package se.haxtrams.launchpad.backend.integration.video.player;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
@@ -25,10 +26,6 @@ public abstract class VideoPlayer {
 
     public abstract Set<ExtendedFeatures> getExtendedFeatures();
 
-    public abstract VideoFile openVideo(VideoFile videoFile);
-
-    public abstract void closePlayer();
-
     public void pauseResume() {
         throw new NotSupportedException();
     }
@@ -51,6 +48,26 @@ public abstract class VideoPlayer {
 
     public void nextAudioTrack() {
         throw new NotSupportedException();
+    }
+
+    public VideoFile openVideo(VideoFile videoFile) {
+        lockProcessAndExecute(process -> {
+            try {
+                process.filter(Process::isAlive).ifPresent(VideoPlayer::killVideoProcess);
+
+                this.videoProcess = new ProcessBuilder(buildLaunchCommand(videoFile))
+                        .inheritIO()
+                        .start();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        return videoFile;
+    }
+
+    public void closePlayer() {
+        lockProcessAndExecuteIfAlive(VideoPlayer::killVideoProcess);
     }
 
     /**

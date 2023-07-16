@@ -1,22 +1,26 @@
-package se.haxtrams.launchpad.backend.integration.video.player.mplayer;
+package se.haxtrams.launchpad.backend.integration.video.player.mpv;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.util.*;
+import java.util.List;
+import java.util.Set;
 import se.haxtrams.launchpad.backend.integration.video.player.ExtendedFeatures;
 import se.haxtrams.launchpad.backend.integration.video.player.VideoPlayer;
+import se.haxtrams.launchpad.backend.integration.video.player.mpv.model.CommandRequest;
+import se.haxtrams.launchpad.backend.integration.video.player.mpv.model.MpvCommand;
+import se.haxtrams.launchpad.backend.integration.video.player.mpv.model.MpvProperty;
 import se.haxtrams.launchpad.backend.model.domain.VideoFile;
 import se.haxtrams.launchpad.backend.model.domain.settings.VideoSettings;
 
-public class MPlayer extends VideoPlayer {
-    public MPlayer(VideoSettings videoSettings) {
+public class MpvPlayer extends VideoPlayer {
+    private MpvClient mpvClient = new MpvClient();
+
+    public MpvPlayer(VideoSettings videoSettings) {
         super(videoSettings);
     }
 
     @Override
     public String getName() {
-        return "MPlayer";
+        return "MPV";
     }
 
     @Override
@@ -35,11 +39,11 @@ public class MPlayer extends VideoPlayer {
         lockProcessAndExecute(process -> {
             try {
                 process.filter(Process::isAlive).ifPresent(VideoPlayer::killVideoProcess);
-
                 this.videoProcess = new ProcessBuilder(buildLaunchCommand(videoFile))
-                        .redirectOutput(ProcessBuilder.Redirect.INHERIT)
-                        .redirectError(ProcessBuilder.Redirect.INHERIT)
+                        .redirectOutput(ProcessBuilder.Redirect.DISCARD)
+                        .redirectError(ProcessBuilder.Redirect.DISCARD)
                         .start();
+                this.videoProcess.onExit().thenRun(mpvClient::closeSocket);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -50,48 +54,31 @@ public class MPlayer extends VideoPlayer {
 
     @Override
     public void pauseResume() {
-        sendCommand(CLICommands.PAUSE);
+        mpvClient.send(new CommandRequest(List.of(MpvCommand.CYCLE, MpvProperty.PAUSE)));
     }
 
     @Override
     public void skipForward() {
-        sendCommand("%s 15 0".formatted(CLICommands.SEEK));
+        mpvClient.send(new CommandRequest(List.of(MpvCommand.SEEK, 15)));
     }
 
     @Override
     public void skipBackward() {
-        sendCommand("%s -15 0".formatted(CLICommands.SEEK));
+        mpvClient.send(new CommandRequest(List.of(MpvCommand.SEEK, -15)));
     }
 
     @Override
     public void nextSubtitle() {
-        sendCommand(CLICommands.SUB_SELECT);
-    }
-
-    @Override
-    public void nextAudioTrack() {
-        sendCommand(CLICommands.SWITCH_AUDIO);
+        mpvClient.send(new CommandRequest(List.of(MpvCommand.CYCLE, MpvProperty.SUB)));
     }
 
     @Override
     public void toggleSubtitles() {
-        sendCommand(CLICommands.SUB_VISIBILITY);
+        mpvClient.send(new CommandRequest(List.of(MpvCommand.CYCLE, MpvProperty.SUB_VISIBILITY)));
     }
 
-    private void sendCommand(CLICommands cmd) {
-        sendCommand(cmd.getValue());
-    }
-
-    private void sendCommand(String cmd) {
-        lockProcessAndExecuteIfAlive(process -> {
-            try {
-                var writer = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
-                writer.write(cmd);
-                writer.newLine();
-                writer.flush();
-            } catch (Exception e) {
-                throw new RuntimeException("Unexpected error in MPlayer::sendCommand", e);
-            }
-        });
+    @Override
+    public void nextAudioTrack() {
+        mpvClient.send(new CommandRequest(List.of(MpvCommand.CYCLE, MpvProperty.AUDIO)));
     }
 }

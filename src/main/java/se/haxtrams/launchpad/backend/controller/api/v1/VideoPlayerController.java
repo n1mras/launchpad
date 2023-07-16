@@ -101,7 +101,7 @@ public class VideoPlayerController {
 
     @ExceptionHandler
     private ResponseEntity<String> handleNotSupportedException(NotSupportedException e) {
-        log.warn("Request for unsupported feature in VideoPlayerController", e);
+        log.warn("Request for unsupported feature in VideoPlayerController");
         return createSimpleResponse(HttpStatus.BAD_REQUEST);
     }
 

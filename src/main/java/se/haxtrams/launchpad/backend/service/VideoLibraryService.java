@@ -76,7 +76,8 @@ public class VideoLibraryService {
 
             fileRepository
                     .streamAllBy()
-                    .filter(entity -> Files.notExists(Paths.get(entity.getPath())))
+                    .filter(entity ->
+                            !isVideoFileType(entity.getPath()) || Files.notExists(Paths.get(entity.getPath())))
                     .peek(entity -> log.info("{} was removed", entity.getPath()))
                     .map(FileEntity::getId)
                     .forEach(fileRepository::deleteById);
@@ -132,7 +133,11 @@ public class VideoLibraryService {
     }
 
     private boolean isVideoFileType(final File file) {
-        var extension = FilenameUtils.getExtension(file.getName());
+        return isVideoFileType(file.getName());
+    }
+
+    private boolean isVideoFileType(final String fileName) {
+        var extension = FilenameUtils.getExtension(fileName);
         return settings.getVideoSettings().getFileTypes().contains(extension);
     }
 }

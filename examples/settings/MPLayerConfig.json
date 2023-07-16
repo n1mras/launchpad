@@ -1,0 +1,21 @@
+{
+  "videoSettings": {
+    "playerType": "MPLAYER_SLAVE_MODE",
+    "path": "/usr/bin/mplayer",
+    "args": [
+      "-slave",
+      "-really-quiet",
+      "-fs"
+    ],
+    "fileTypes": [
+      "avi",
+      "mp4",
+      "mpg",
+      "webm",
+      "mkv"
+    ],
+    "folders": [
+      "/home/username/Videos"
+    ]
+  }
+}
