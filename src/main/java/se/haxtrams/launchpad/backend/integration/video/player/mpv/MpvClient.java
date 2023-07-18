@@ -86,7 +86,7 @@ public class MpvClient {
             }
             sleep(1);
         } while (Instant.now().isBefore(abortTime));
-        log.warn("Could not find socket in time.");
+        throw new RuntimeException("Could not find unix socket within time limit");
     }
 
     private String toJsonRequest(MpvCommand command, Object... params) {
