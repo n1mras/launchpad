@@ -64,7 +64,7 @@ public class MpvClient {
         if (isConnected()) return;
 
         try {
-            waitForSocketCreated(Duration.ofMillis(500));
+            waitForSocketCreated(Duration.ofSeconds(5));
             mpvSocketChannel = SocketChannel.open(StandardProtocolFamily.UNIX);
             mpvSocketChannel.connect(UnixDomainSocketAddress.of(SOCKET_PATH));
         } catch (IOException e) {
@@ -78,16 +78,15 @@ public class MpvClient {
                 .orElse(false);
     }
 
-    private boolean waitForSocketCreated(Duration timeout) {
+    private void waitForSocketCreated(Duration timeout) {
         var abortTime = Instant.now().plus(timeout);
         do {
             if (new File(SOCKET_PATH).canWrite()) {
-                return true;
+                return;
             }
             sleep(1);
         } while (Instant.now().isBefore(abortTime));
         log.warn("Could not find socket in time.");
-        return false;
     }
 
     private String toJsonRequest(MpvCommand command, Object... params) {
