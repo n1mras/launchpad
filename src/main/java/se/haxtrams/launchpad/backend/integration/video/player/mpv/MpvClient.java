@@ -1,5 +1,6 @@
 package se.haxtrams.launchpad.backend.integration.video.player.mpv;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import java.io.File;
 import java.io.IOException;
@@ -8,13 +9,15 @@ import java.net.UnixDomainSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.haxtrams.launchpad.backend.integration.video.player.mpv.model.CommandRequest;
+import se.haxtrams.launchpad.backend.integration.video.player.mpv.model.MpvCommand;
 
 public class MpvClient {
     private static final String SOCKET_PATH = "/tmp/launchpad-mpv.socket";
@@ -22,52 +25,85 @@ public class MpvClient {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     private SocketChannel mpvSocketChannel;
 
-    public void send(CommandRequest commandRequest) {
-        var socket = getSocket();
-        if (socket.isEmpty()) {
-            return;
+    public void send(MpvCommand command, Object... params) {
+        if (isConnected()) {
+            send(toJsonRequest(command, params));
         }
+    }
 
+    private void send(String json) {
         try {
             var buffer = ByteBuffer.allocate(1024);
-            var json = jsonMapper.writeValueAsString(commandRequest);
             buffer.put(json.getBytes(StandardCharsets.UTF_8));
             buffer.putChar('\n');
             buffer.flip();
             while (buffer.hasRemaining()) {
-                socket.get().write(buffer);
+                mpvSocketChannel.write(buffer);
             }
 
-            log.info("Message sent: {}", json);
+            log.debug("Message sent: {}", json);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void closeSocket() {
+    public void disconnect() {
         try {
             if (Objects.nonNull(mpvSocketChannel)) {
-                log.info("closing mpv socket");
                 mpvSocketChannel.close();
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
+            // mpv doesn't remove the socket.
             new File(SOCKET_PATH).delete();
-            mpvSocketChannel = null;
         }
     }
 
-    private Optional<SocketChannel> getSocket() {
+    public void connect() {
+        if (isConnected()) return;
+
         try {
-            if (mpvSocketChannel == null && Files.exists(Paths.get(SOCKET_PATH))) {
-                mpvSocketChannel = SocketChannel.open(StandardProtocolFamily.UNIX);
-                mpvSocketChannel.connect(UnixDomainSocketAddress.of(SOCKET_PATH));
-            }
+            waitForSocketCreated(Duration.ofMillis(500));
+            mpvSocketChannel = SocketChannel.open(StandardProtocolFamily.UNIX);
+            mpvSocketChannel.connect(UnixDomainSocketAddress.of(SOCKET_PATH));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
 
-        return Optional.ofNullable(mpvSocketChannel);
+    private boolean isConnected() {
+        return Optional.ofNullable(mpvSocketChannel)
+                .map(SocketChannel::isConnected)
+                .orElse(false);
+    }
+
+    private boolean waitForSocketCreated(Duration timeout) {
+        var abortTime = Instant.now().plus(timeout);
+        do {
+            if (new File(SOCKET_PATH).canWrite()) {
+                return true;
+            }
+            sleep(1);
+        } while (Instant.now().isBefore(abortTime));
+        log.warn("Could not find socket in time.");
+        return false;
+    }
+
+    private String toJsonRequest(MpvCommand command, Object... params) {
+        try {
+            var cmdArgs = Stream.concat(Stream.of(command), Stream.of(params)).toList();
+            return jsonMapper.writeValueAsString(new CommandRequest(cmdArgs));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void sleep(long ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

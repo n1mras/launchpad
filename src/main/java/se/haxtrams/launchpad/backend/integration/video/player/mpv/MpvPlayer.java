@@ -1,21 +1,20 @@
 package se.haxtrams.launchpad.backend.integration.video.player.mpv;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Set;
 import se.haxtrams.launchpad.backend.integration.video.player.ExtendedFeatures;
 import se.haxtrams.launchpad.backend.integration.video.player.VideoPlayer;
-import se.haxtrams.launchpad.backend.integration.video.player.mpv.model.CommandRequest;
 import se.haxtrams.launchpad.backend.integration.video.player.mpv.model.MpvCommand;
 import se.haxtrams.launchpad.backend.integration.video.player.mpv.model.MpvProperty;
 import se.haxtrams.launchpad.backend.model.domain.VideoFile;
 import se.haxtrams.launchpad.backend.model.domain.settings.VideoSettings;
 
 public class MpvPlayer extends VideoPlayer {
-    private MpvClient mpvClient = new MpvClient();
+    private final MpvClient mpvClient;
 
-    public MpvPlayer(VideoSettings videoSettings) {
+    public MpvPlayer(VideoSettings videoSettings, MpvClient mpvClient) {
         super(videoSettings);
+        this.mpvClient = mpvClient;
     }
 
     @Override
@@ -43,7 +42,9 @@ public class MpvPlayer extends VideoPlayer {
                         .redirectOutput(ProcessBuilder.Redirect.DISCARD)
                         .redirectError(ProcessBuilder.Redirect.DISCARD)
                         .start();
-                this.videoProcess.onExit().thenRun(mpvClient::closeSocket);
+                mpvClient.connect();
+
+                this.videoProcess.onExit().thenRun(mpvClient::disconnect);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -54,31 +55,31 @@ public class MpvPlayer extends VideoPlayer {
 
     @Override
     public void pauseResume() {
-        mpvClient.send(new CommandRequest(List.of(MpvCommand.CYCLE, MpvProperty.PAUSE)));
+        mpvClient.send(MpvCommand.CYCLE, MpvProperty.PAUSE);
     }
 
     @Override
     public void skipForward() {
-        mpvClient.send(new CommandRequest(List.of(MpvCommand.SEEK, 15)));
+        mpvClient.send(MpvCommand.SEEK, 15);
     }
 
     @Override
     public void skipBackward() {
-        mpvClient.send(new CommandRequest(List.of(MpvCommand.SEEK, -15)));
+        mpvClient.send(MpvCommand.SEEK, -15);
     }
 
     @Override
     public void nextSubtitle() {
-        mpvClient.send(new CommandRequest(List.of(MpvCommand.CYCLE, MpvProperty.SUB)));
+        mpvClient.send(MpvCommand.CYCLE, MpvProperty.SUB);
     }
 
     @Override
     public void toggleSubtitles() {
-        mpvClient.send(new CommandRequest(List.of(MpvCommand.CYCLE, MpvProperty.SUB_VISIBILITY)));
+        mpvClient.send(MpvCommand.CYCLE, MpvProperty.SUB_VISIBILITY);
     }
 
     @Override
     public void nextAudioTrack() {
-        mpvClient.send(new CommandRequest(List.of(MpvCommand.CYCLE, MpvProperty.AUDIO)));
+        mpvClient.send(MpvCommand.CYCLE, MpvProperty.AUDIO);
     }
 }
