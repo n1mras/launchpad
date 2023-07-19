@@ -18,12 +18,10 @@ public class FileEntity {
     private String name;
 
     @NotNull
-    @Lob
     @Column
     private String path;
 
     @NotNull
-    @Lob
     private String directory;
 
     @OneToOne(mappedBy = "file", orphanRemoval = true)
