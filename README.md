@@ -31,7 +31,7 @@ like so `java -Xmx256M -jar launchpad.jar`. Large libraries may require more mem
 
 ## Usage
 Use the web frontend [launchpad-ui](https://github.com/n1mras/launchpad-ui) to start a library refresh by pressing the refresh button in the top right corner.
-Alternatively peform a post using curl or the provided swagger UI at http://localhost:8000/swagger-ui/index.html`
+Alternatively peform a post using curl or the provided swagger UI at http://localhost:8000/swagger-ui/index.html
 
     curl -X 'POST' \
     'http://localhost:8000/api/v1/library/video/refresh' \
