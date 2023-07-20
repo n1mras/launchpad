@@ -1,3 +1,22 @@
 launchpad:
   settings:
     path: "src/test/resources/settings.json"
+spring:
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+    hibernate:
+      ddl-auto: none
+  datasource:
+    url: jdbc:h2:mem:launchpad-db
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: false
+      path: /h2
+  flyway:
+    enabled: true
+    locations: db/migrations

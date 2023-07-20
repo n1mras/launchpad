@@ -1,7 +1,7 @@
 package se.haxtrams.launchpad.backend.model.domain.settings;
 
 import static java.util.Objects.requireNonNull;
-import static se.haxtrams.launchpad.backend.helper.Utils.*;
+import static se.haxtrams.launchpad.backend.util.Utils.*;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

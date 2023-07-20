@@ -8,16 +8,18 @@ import org.springframework.context.annotation.Configuration;
 import se.haxtrams.launchpad.backend.integration.video.player.GenericVideoPlayer;
 import se.haxtrams.launchpad.backend.integration.video.player.VideoPlayer;
 import se.haxtrams.launchpad.backend.integration.video.player.mplayer.MPlayer;
+import se.haxtrams.launchpad.backend.integration.video.player.mpv.MpvClient;
+import se.haxtrams.launchpad.backend.integration.video.player.mpv.MpvPlayer;
 import se.haxtrams.launchpad.backend.model.domain.settings.Settings;
 import se.haxtrams.launchpad.backend.model.domain.settings.VideoPlayerType;
 import se.haxtrams.launchpad.backend.service.DataLoader;
 
 @Configuration
-public class LaunchpadConfig {
+public class SettingsConfig {
     private final DataLoader dataLoader;
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public LaunchpadConfig(DataLoader dataLoader) {
+    public SettingsConfig(DataLoader dataLoader) {
         this.dataLoader = dataLoader;
     }
 
@@ -31,6 +33,9 @@ public class LaunchpadConfig {
         var playerType = settings.getVideoSettings().getPlayerType();
         if (VideoPlayerType.MPLAYER_SLAVE_MODE.equals(playerType)) {
             return new MPlayer(settings.getVideoSettings());
+        }
+        if (VideoPlayerType.MPV.equals(playerType)) {
+            return new MpvPlayer(settings.getVideoSettings(), new MpvClient());
         }
         return new GenericVideoPlayer(settings.getVideoSettings());
     }

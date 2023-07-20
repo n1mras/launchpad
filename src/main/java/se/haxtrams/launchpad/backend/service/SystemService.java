@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import se.haxtrams.launchpad.backend.integration.video.player.VideoPlayer;
 import se.haxtrams.launchpad.backend.integration.video.player.mplayer.MPlayer;
 import se.haxtrams.launchpad.backend.model.domain.MediaFile;
-import se.haxtrams.launchpad.backend.model.domain.VideoFile;
 import se.haxtrams.launchpad.backend.model.domain.settings.Settings;
 
 @Service
@@ -21,14 +20,6 @@ public class SystemService {
         this.videoPlayer = new MPlayer(settings.getVideoSettings());
     }
 
-    public void openVideo(final VideoFile videoFile) {
-        videoPlayer.openVideo(videoFile);
-    }
-
-    public void killVideoProcess() {
-        videoPlayer.closePlayer();
-    }
-
     public void openFileLocation(final MediaFile mediaFile) {
         try {
             var directory = mediaFile.fileDirectory();
@@ -39,9 +30,5 @@ public class SystemService {
         } catch (Exception e) {
             throw new RuntimeException("Could not open directory", e);
         }
-    }
-
-    public void pause() {
-        videoPlayer.pauseResume();
     }
 }
