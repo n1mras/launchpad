@@ -1,6 +1,6 @@
 package se.haxtrams.launchpad.backend.controller.api.v1;
 
-import static se.haxtrams.launchpad.backend.helper.ResponseHelper.createSimpleResponse;
+import static se.haxtrams.launchpad.backend.util.ResponseUtil.createSimpleResponse;
 
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -101,7 +101,7 @@ public class VideoPlayerController {
 
     @ExceptionHandler
     private ResponseEntity<String> handleNotSupportedException(NotSupportedException e) {
-        log.warn("Request for unsupported feature in VideoPlayerController", e);
+        log.warn("Request for unsupported feature in VideoPlayerController");
         return createSimpleResponse(HttpStatus.BAD_REQUEST);
     }
 

@@ -1,4 +1,4 @@
-package se.haxtrams.launchpad.backend.helper;
+package se.haxtrams.launchpad.backend.util;
 
 import java.util.Objects;
 

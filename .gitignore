@@ -37,3 +37,4 @@ build/
 /.mvn/
 /src/main/resources/application-local.yaml
 /settings.json
+/data/

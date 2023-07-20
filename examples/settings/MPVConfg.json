@@ -1,0 +1,21 @@
+{
+  "videoSettings": {
+    "playerType": "MPV",
+    "path": "/usr/bin/mpv",
+    "args": [
+      "--input-ipc-server=/tmp/launchpad-mpv.socket",
+      "-fs"
+    ],
+    "fileTypes": [
+      "avi",
+      "mp4",
+      "mpg",
+      "webm",
+      "mkv"
+    ],
+
+    "folders": [
+      "/home/username/Videos"
+    ]
+  }
+}

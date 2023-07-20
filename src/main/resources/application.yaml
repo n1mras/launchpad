@@ -1,12 +1,22 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:launchpad-db
+    url: jdbc:h2:file:./data/launchpad
   h2:
     console:
       enabled: false
       path: /h2
   jpa:
     open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+          batch_size: 1000
+    hibernate:
+      ddl-auto: none
+  flyway:
+    enabled: true
+    locations: db/migrations
 
 launchpad:
   settings:
