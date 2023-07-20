@@ -15,6 +15,7 @@ import se.haxtrams.launchpad.backend.converter.ApiConverter;
 import se.haxtrams.launchpad.backend.exceptions.NotFoundException;
 import se.haxtrams.launchpad.backend.model.api.response.PageResponse;
 import se.haxtrams.launchpad.backend.model.api.response.video.VideoFileResponse;
+import se.haxtrams.launchpad.backend.service.SyncService;
 import se.haxtrams.launchpad.backend.service.SystemService;
 import se.haxtrams.launchpad.backend.service.VideoLibraryService;
 
@@ -22,13 +23,18 @@ import se.haxtrams.launchpad.backend.service.VideoLibraryService;
 @RequestMapping("/api/v1/library/video")
 public class VideoLibraryController {
     private final VideoLibraryService videoService;
+    private final SyncService syncService;
     private final SystemService systemService;
     private final ApiConverter apiConverter;
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     public VideoLibraryController(
-            VideoLibraryService videoLibraryService, SystemService systemService, ApiConverter apiConverter) {
+            VideoLibraryService videoLibraryService,
+            SyncService syncService,
+            SystemService systemService,
+            ApiConverter apiConverter) {
         this.videoService = videoLibraryService;
+        this.syncService = syncService;
         this.systemService = systemService;
         this.apiConverter = apiConverter;
     }
@@ -47,7 +53,7 @@ public class VideoLibraryController {
 
     @PostMapping("/refresh")
     public ResponseEntity<String> refreshVideoLibrary() {
-        CompletableFuture.runAsync(videoService::loadFiles);
+        CompletableFuture.runAsync(syncService::sync);
         return createSimpleResponse(HttpStatus.ACCEPTED);
     }
 
