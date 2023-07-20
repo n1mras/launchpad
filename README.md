@@ -27,7 +27,7 @@ This is just a small hobby project, no effort has been put into security or acce
 
 ## Starting the server
 Run `java -jar launchpad.jar`. Java is a memory hog if not constrained, you can apply heap limits by passing jvm arguments
-like so `java -Xmx256M -jar launchpad.jar`. Large libraries may require more memory.
+like so `java -Xmx256M -jar launchpad.jar`.
 
 ## Usage
 Use the web frontend [launchpad-ui](https://github.com/n1mras/launchpad-ui) to start a library refresh by pressing the refresh button in the top right corner.
