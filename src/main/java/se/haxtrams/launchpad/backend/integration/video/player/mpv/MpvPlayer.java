@@ -39,8 +39,7 @@ public class MpvPlayer extends VideoPlayer {
             try {
                 process.filter(Process::isAlive).ifPresent(VideoPlayer::killVideoProcess);
                 this.videoProcess = new ProcessBuilder(buildLaunchCommand(videoFile))
-                        // todo set to discard - need output for logging rare error.
-                        .redirectOutput(ProcessBuilder.Redirect.INHERIT)
+                        .redirectOutput(ProcessBuilder.Redirect.DISCARD)
                         .redirectError(ProcessBuilder.Redirect.INHERIT)
                         .start();
                 mpvClient.connect();
