@@ -7,7 +7,8 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Instant;
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -63,37 +64,40 @@ public class SyncService {
     }
 
     private void addNewFiles() {
+        var knownPaths = new HashSet<>(fileRepository.findAllPaths());
+
         for (String folder : settings.getVideoSettings().getFolders()) {
             log.info(String.format("Searching %s", folder));
 
-            dataLoader.processFilesIn(
-                    folder,
-                    true,
-                    file -> Optional.of(file).filter(this::isVideoFileType).ifPresent(this::persistVideo));
+            var newFiles = new ArrayList<File>();
+            dataLoader.processFilesIn(folder, true, file -> {
+                if (isVideoFileType(file) && !knownPaths.contains(file.getAbsolutePath())) {
+                    newFiles.add(file);
+                    knownPaths.add(file.getAbsolutePath());
+                }
+            });
+
+            if (!newFiles.isEmpty()) {
+                var fileEntities = fileRepository.saveAll(newFiles.stream()
+                        .map(f -> new FileEntity(f.getName(), f.getAbsolutePath(), f.getParent()))
+                        .toList());
+
+                videoRepository.saveAll(fileEntities.stream()
+                        .map(fe -> new VideoEntity(cleanupFileName(removeExtension(fe.getName())), fe))
+                        .toList());
+            }
         }
     }
 
     private void removeInvalidEntries() {
-        fileRepository
+        var toDelete = fileRepository
                 .streamAllBy()
                 .filter(entity -> !isVideoFileType(entity.getPath()) || Files.notExists(Paths.get(entity.getPath())))
                 .peek(entity -> log.info("{} was removed", entity.getPath()))
                 .map(FileEntity::getId)
-                .forEach(fileRepository::deleteById);
-    }
+                .toList();
 
-    private VideoEntity persistVideo(final File file) {
-        return videoRepository
-                .findByFilePath(file.getAbsolutePath())
-                .orElseGet(() -> videoRepository.save(
-                        new VideoEntity(cleanupFileName(removeExtension(file.getName())), persistFile(file))));
-    }
-
-    private FileEntity persistFile(final File file) {
-        return fileRepository
-                .findByPath(file.getAbsolutePath())
-                .orElseGet(() ->
-                        fileRepository.save(new FileEntity(file.getName(), file.getAbsolutePath(), file.getParent())));
+        fileRepository.deleteAllByIdInBatch(toDelete);
     }
 
     private boolean isVideoFileType(final File file) {

@@ -1,4 +1,4 @@
-from docker.io/maven:3.9-eclipse-temurin-17 AS build
+from docker.io/maven:3.9-eclipse-temurin-25 AS build
 
 RUN mkdir /opt/build
 WORKDIR /opt/build
