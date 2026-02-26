@@ -11,7 +11,7 @@
 
     <groupId>se.haxtrams.launchpad</groupId>
     <artifactId>backend</artifactId>
-    <version>1.2.0</version>
+    <version>1.2.1</version>
     <name>backend</name>
     <description>Media server backend</description>
     <properties>
@@ -54,8 +54,8 @@
             <version>${apache-commons.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-flyway</artifactId>
         </dependency>
     </dependencies>
 
