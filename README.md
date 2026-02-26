@@ -6,13 +6,13 @@ This is just a small hobby project, no effort has been put into security or acce
 
 # Requirements
 * Linux or possibly a posix os.
-* Java runtime 17
+* Java runtime 25
 
 # Installation
 
 ## How to build
 ### Method 1 - native
-1. Install open jdk 17 and apache maven
+1. Install open jdk 25 and apache maven
 2. Run `mvn clean package` to build the jar.
 3. Resulting .jar is located in the target directory.
 
