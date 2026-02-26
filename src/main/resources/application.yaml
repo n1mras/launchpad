@@ -12,6 +12,8 @@ spring:
         jdbc:
           time_zone: UTC
           batch_size: 1000
+        order_inserts: true
+        order_updates: true
     hibernate:
       ddl-auto: none
   flyway:

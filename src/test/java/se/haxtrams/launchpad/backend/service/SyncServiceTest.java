@@ -7,7 +7,6 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -63,17 +62,16 @@ class SyncServiceTest {
         var fileEntity = new FileEntity(file.getName(), file.getAbsolutePath(), file.getParent());
 
         when(videoSettings.getFolders()).thenReturn(List.of(folder));
+        when(fileRepository.findAllPaths()).thenReturn(List.of());
         when(fileRepository.streamAllBy()).thenReturn(Stream.empty());
         simulateTraversal(folder, file);
-        when(videoRepository.findByFilePath(file.getAbsolutePath())).thenReturn(Optional.empty());
-        when(fileRepository.findByPath(file.getAbsolutePath())).thenReturn(Optional.empty());
-        when(fileRepository.save(any())).thenReturn(fileEntity);
-        when(videoRepository.save(any())).thenReturn(new VideoEntity("movie", fileEntity));
+        when(fileRepository.saveAll(anyList())).thenReturn(List.of(fileEntity));
+        when(videoRepository.saveAll(anyList())).thenReturn(List.of(new VideoEntity("movie", fileEntity)));
 
         syncService.sync();
 
-        verify(fileRepository).save(any(FileEntity.class));
-        verify(videoRepository).save(any(VideoEntity.class));
+        verify(fileRepository).saveAll(anyList());
+        verify(videoRepository).saveAll(anyList());
     }
 
     @Test
@@ -82,31 +80,30 @@ class SyncServiceTest {
         var file = new File(folder + "/document.pdf");
 
         when(videoSettings.getFolders()).thenReturn(List.of(folder));
+        when(fileRepository.findAllPaths()).thenReturn(List.of());
         when(fileRepository.streamAllBy()).thenReturn(Stream.empty());
         simulateTraversal(folder, file);
 
         syncService.sync();
 
-        verify(fileRepository, never()).save(any());
-        verify(videoRepository, never()).save(any());
+        verify(fileRepository, never()).saveAll(anyList());
+        verify(videoRepository, never()).saveAll(anyList());
     }
 
     @Test
     void sync_skipsAlreadyIndexedFile() {
         var folder = tempDir.toString();
         var file = new File(folder + "/movie.mkv");
-        var existingFileEntity = new FileEntity(file.getName(), file.getAbsolutePath(), file.getParent());
-        var existingVideoEntity = new VideoEntity("movie", existingFileEntity);
 
         when(videoSettings.getFolders()).thenReturn(List.of(folder));
+        when(fileRepository.findAllPaths()).thenReturn(List.of(file.getAbsolutePath()));
         when(fileRepository.streamAllBy()).thenReturn(Stream.empty());
         simulateTraversal(folder, file);
-        when(videoRepository.findByFilePath(file.getAbsolutePath())).thenReturn(Optional.of(existingVideoEntity));
 
         syncService.sync();
 
-        verify(fileRepository, never()).save(any());
-        verify(videoRepository, never()).save(any());
+        verify(fileRepository, never()).saveAll(anyList());
+        verify(videoRepository, never()).saveAll(anyList());
     }
 
     @Test
@@ -120,7 +117,7 @@ class SyncServiceTest {
 
         syncService.sync();
 
-        verify(fileRepository).deleteById(1L);
+        verify(fileRepository).deleteAllByIdInBatch(List.of(1L));
     }
 
     @Test
@@ -134,7 +131,7 @@ class SyncServiceTest {
 
         syncService.sync();
 
-        verify(fileRepository).deleteById(2L);
+        verify(fileRepository).deleteAllByIdInBatch(List.of(2L));
     }
 
     @Test
@@ -148,7 +145,7 @@ class SyncServiceTest {
 
         syncService.sync();
 
-        verify(fileRepository, never()).deleteById(any());
+        verify(fileRepository).deleteAllByIdInBatch(List.of());
     }
 
     @Test
@@ -157,6 +154,7 @@ class SyncServiceTest {
         var folder2 = "/media/series";
 
         when(videoSettings.getFolders()).thenReturn(List.of(folder1, folder2));
+        when(fileRepository.findAllPaths()).thenReturn(List.of());
         when(fileRepository.streamAllBy()).thenReturn(Stream.empty());
 
         syncService.sync();
@@ -166,8 +164,7 @@ class SyncServiceTest {
     }
 
     @Test
-    void sync_doesNotStartIfAlreadyInProgress() throws Exception {
-        // Hold the lock as if a sync is already running
+    void sync_doesNotStartIfAlreadyInProgress() {
         ReflectionTestUtils.setField(
                 syncService, "inProgress", new java.util.concurrent.atomic.AtomicBoolean(true));
 
