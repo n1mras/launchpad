@@ -40,7 +40,7 @@ public class MpvPlayer extends VideoPlayer {
                 process.filter(Process::isAlive).ifPresent(VideoPlayer::killVideoProcess);
                 this.videoProcess = new ProcessBuilder(buildLaunchCommand(videoFile))
                         .redirectOutput(ProcessBuilder.Redirect.DISCARD)
-                        .redirectError(ProcessBuilder.Redirect.DISCARD)
+                        .redirectError(ProcessBuilder.Redirect.INHERIT)
                         .start();
                 mpvClient.connect();
 

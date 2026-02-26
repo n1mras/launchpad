@@ -66,9 +66,10 @@ public class SyncService {
         for (String folder : settings.getVideoSettings().getFolders()) {
             log.info(String.format("Searching %s", folder));
 
-            dataLoader.processFilesIn(folder, true, file -> Optional.of(file)
-                    .filter(this::isVideoFileType)
-                    .ifPresent(this::persistVideo));
+            dataLoader.processFilesIn(
+                    folder,
+                    true,
+                    file -> Optional.of(file).filter(this::isVideoFileType).ifPresent(this::persistVideo));
         }
     }
 
