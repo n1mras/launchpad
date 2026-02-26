@@ -146,6 +146,7 @@ class SyncServiceTest {
         syncService.sync();
 
         verify(fileRepository).deleteAllByIdInBatch(List.of());
+
     }
 
     @Test
