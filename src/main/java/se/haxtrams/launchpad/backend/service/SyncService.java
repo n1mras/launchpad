@@ -97,6 +97,7 @@ public class SyncService {
                 .map(FileEntity::getId)
                 .toList();
 
+        videoRepository.deleteAllByFileIdIn(toDelete);
         fileRepository.deleteAllByIdInBatch(toDelete);
     }
 
